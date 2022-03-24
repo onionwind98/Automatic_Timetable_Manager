@@ -1,6 +1,6 @@
-# automatic_timetable_manager
+# Automatic Timetable Manager
 
-A new Flutter application.
+Final Year Project by student Samuel Chai Ye Ler
 
 ## Getting Started
 
