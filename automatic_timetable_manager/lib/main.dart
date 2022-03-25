@@ -1,9 +1,10 @@
 // ignore_for_file: prefer_final_fields
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Authentication/login.dart';
-import 'home.dart';
+import 'Screens/Authentication/login.dart';
+import 'Screens/home.dart';
 
 void main() {
   runApp(MyApp());
@@ -20,19 +21,20 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    // _checkIfLoggedIn();
+    _checkIfLoggedIn();
     super.initState();
   }
-  // void _checkIfLoggedIn() async{
-  //   // check if token is there
-  //   SharedPreferences localStorage = await SharedPreferences.getInstance();
-  //   var token = localStorage.getString('token');
-  //   print(token.toString());
-  //   if(token!= null){
-  //     setState(() {
-  //       _isLoggedIn = true;
-  //     });
-  //   }
+  void _checkIfLoggedIn() async {
+    // check if token is there
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var token = localStorage.getString('token');
+    print(token.toString());
+    if (token != null) {
+      setState(() {
+        _isLoggedIn = true;
+      });
+    }
+  }
 
 
   @override

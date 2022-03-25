@@ -1,7 +1,10 @@
+import 'package:automatic_timetable_manager/Screens/Authentication/resetPassword.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../../Database/api.dart';
 
 class EnterEmail extends StatefulWidget{
   @override
@@ -10,6 +13,7 @@ class EnterEmail extends StatefulWidget{
 
 class _EnterEmailState extends State<EnterEmail> {
   TextEditingController emailController = TextEditingController();
+  Api api = Api();
   late bool error;
   late String errorText;
 
@@ -27,14 +31,14 @@ class _EnterEmailState extends State<EnterEmail> {
 
   @override
   Widget build(BuildContext context) {
-    Size size= MediaQuery.of(context).size;
+    Size screen= MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Color.fromRGBO(127, 235, 249, 1),
       body: Stack(
         alignment: Alignment.center,
         children: [
           Positioned(
-            top: size.height*0.05,
+            top: screen.height*0.05,
             left: 10,
             child: Hero(
               tag:'backButton',
@@ -51,7 +55,7 @@ class _EnterEmailState extends State<EnterEmail> {
             ),
           ),
           Positioned(
-            top:size.height*0.15,
+            top:screen.height*0.15,
             child: Column(
               children: [
                 Text(
@@ -64,15 +68,16 @@ class _EnterEmailState extends State<EnterEmail> {
                     )
                 ),
                 Text(
-                  'Enter Phone Number to reset Password',
+                  'Enter email address to \n reset your password',
                   style: TextStyle(
                     fontSize: 20,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 20),
                 Container(
                   height: 60,
-                  width: size.width*0.7,
+                  width: screen.width*0.7,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(40.0),
@@ -107,8 +112,8 @@ class _EnterEmailState extends State<EnterEmail> {
                 if(error)
                   Container(
                       alignment: Alignment.center,
-                      height: size.height*0.05,
-                      width: size.width*0.7,
+                      height: screen.height*0.05,
+                      width: screen.width*0.7,
                       child: Text(
                         errorText,
                         textAlign: TextAlign.center,
@@ -121,41 +126,36 @@ class _EnterEmailState extends State<EnterEmail> {
                 MaterialButton(
                   padding: EdgeInsets.all(0),
                   onPressed: () {
-                    // Map data = {
-                    //   'email': emailController.text
-                    // };
-                    // if(emailController.text.isEmpty){
-                    //   setState(() {
-                    //     errorText='Please fill in the email address!';
-                    //     error=true;
-                    //   });
-                    // }else{
-                    //   error=false;
-                    //   if(widget.destination=='resetPW'){
-                    //     api.postData('checkPhoneNumber', data).then((value) {
-                    //       if(value['message']=='Invalid Phone Number'){
-                    //         alertDialog.showAlertDialog('Invalid Phone Number','Please enter a valid Phone Number to reset the password.',context);
-                    //       }else{
-                    //         print(value);
-                    //         Navigator.push(
-                    //             context, MaterialPageRoute(builder: (context) => ForgetPassword(phoneNumber: phoneNumberController.text,))
-                    //         );
-                    //       }
-                    //     });
-                    //   }
-                    //   else if(widget.destination=='register'){
-                    //     Navigator.push(
-                    //         context, MaterialPageRoute(builder: (context) => registerOTP(phoneNumber: phoneNumberController.text))
-                    //     );
-                    //   }
-                    //
-                    // }
+                    Map data = {
+                      'email': emailController.text
+                    };
+                    if(emailController.text.isEmpty){
+                      setState(() {
+                        errorText='Please fill in the email address!';
+                        error=true;
+                      });
+                    }else{
+                      error=false;
+                      api.postData('checkEmail', data).then((value) {
+                        if(value['message']=='Invalid Email Address'){
+                          setState(() {
+                            errorText='Please enter a valid email address to reset the password.';
+                            error=true;
+                          });
+                        }else{
+                          Navigator.push(
+                              context, MaterialPageRoute(builder: (context) => ResetPassword(email: emailController.text,))
+                          );
+                        }
+                      });
+
+                    }
 
                   },
                   child: Container(
                     alignment: Alignment.center,
                     height: 60,
-                    width: size.width*0.7,
+                    width: screen.width*0.7,
                     decoration: BoxDecoration(
                       // border: Border.all(color: Colors.black,width: 3.0),
                       color: Color.fromRGBO(55, 147, 159, 1),
@@ -182,7 +182,7 @@ class _EnterEmailState extends State<EnterEmail> {
                 ),
                 SizedBox(height: 20),
                 Container(
-                  height: size.height*0.4,
+                  height: screen.height*0.4,
                   child: Image.asset('assets/img/enterEmailPic.png'),
                 )
               ],
