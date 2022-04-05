@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
 import 'package:automatic_timetable_manager/Screens/Settings/setting.dart';
+import 'package:automatic_timetable_manager/Screens/Tasks/taskMenu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -124,7 +125,9 @@ class _HomeState extends State<Home> {
                                 child: MaterialButton(
                                   padding: EdgeInsets.all(0),
                                   onPressed: (){
-                                    print('task');
+                                    Navigator.push(
+                                        context, MaterialPageRoute(builder: (context) => taskMenu())
+                                    );
                                   },
                                   child: Column(
                                     children: [

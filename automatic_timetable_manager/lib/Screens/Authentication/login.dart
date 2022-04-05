@@ -77,13 +77,13 @@ class _LoginState extends State<Login> {
                         children:[
                           //Title
                           Text(
-                              'Automatic Timetable \n Manager',
-                              style: GoogleFonts.bebasNeue(
-                                textStyle:TextStyle(
-                                  fontSize: 50,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            'Automatic Timetable \n Manager',
+                            style: GoogleFonts.bebasNeue(
+                              textStyle:TextStyle(
+                                fontSize: 50,
+                                fontWeight: FontWeight.bold,
                               ),
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: screen.height*0.02),

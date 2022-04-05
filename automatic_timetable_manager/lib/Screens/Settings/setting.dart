@@ -39,11 +39,11 @@ class _SettingState extends State<Setting> {
                       ),
                     ],
                   ),
-                  height: (screen.height*0.2),
+                  height: (screen.height*0.15),
                 ),
               ),
               Positioned(
-                top:screen.height*0.04,
+                top:screen.height*0.01,
                 left:screen.height*0.02,
                 child: Row(
                   children: [
