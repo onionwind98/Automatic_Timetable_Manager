@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../Shared/appBar.dart';
-import '../../Shared/button.dart';
+import '../../Shared/myBoxDecoration.dart';
+import '../../Shared/myButton.dart';
 
 class AssignedTasks extends StatefulWidget{
   @override
@@ -10,11 +11,12 @@ class AssignedTasks extends StatefulWidget{
 }
 
 class _AssignedTasksState extends State<AssignedTasks> {
+  MyBoxDecoration boxDeco = MyBoxDecoration();
 
   @override
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
-    Button button = Button();
+    MyButton button = MyButton();
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -34,7 +36,7 @@ class _AssignedTasksState extends State<AssignedTasks> {
                       onPressed: (){
 
                       },
-                      child: button.shortIconButton(
+                      child: button.myShortIconButton(
                           'Sort by',
                           Color.fromRGBO(55, 147, 159, 1),
                           'assets/img/sortIcon.png',
@@ -47,7 +49,7 @@ class _AssignedTasksState extends State<AssignedTasks> {
                     onPressed: (){
 
                     },
-                    child: button.shortIconButton(
+                    child: button.myShortIconButton(
                         'Date',
                         Color.fromRGBO(55, 147, 159, 1),
                         'assets/img/dateIcon.png',
@@ -59,19 +61,7 @@ class _AssignedTasksState extends State<AssignedTasks> {
 
               SizedBox(height: screen.height*0.02),
               Container(
-                decoration: BoxDecoration(
-                  // border: Border.all(color: Colors.black,width: 2.0),
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                  color: Color.fromRGBO(127, 235, 249, 1),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.4),
-                      spreadRadius: 1,
-                      blurRadius: 7,
-                      offset: Offset(0, 5), // changes position of shadow
-                    ),
-                  ],
-                ),
+                decoration: boxDeco.whiteBoxDecoration(Color.fromRGBO(127, 235, 249, 1)),
                 height: (screen.height*0.67),
                 width: (screen.width*0.9),
                 child: Column(

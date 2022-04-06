@@ -37,6 +37,8 @@ dependencies:
   google_fonts: ^2.3.1
   flutter_svg: ^1.0.3
   shared_preferences: ^2.0.13
+  syncfusion_flutter_sliders: ^20.1.47
+  syncfusion_flutter_core: ^20.1.47
 
 
 dev_dependencies:

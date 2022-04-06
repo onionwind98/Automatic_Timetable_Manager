@@ -1,19 +1,19 @@
 import 'package:automatic_timetable_manager/Screens/Tasks/assignedTasks.dart';
 import 'package:automatic_timetable_manager/Screens/Tasks/taskHistory.dart';
 import 'package:automatic_timetable_manager/Screens/Tasks/unassignedTasks.dart';
-import 'package:automatic_timetable_manager/Shared/button.dart';
+import 'package:automatic_timetable_manager/Shared/myButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../Shared/appBar.dart';
 
-class taskMenu extends StatefulWidget {
+class TaskMenu extends StatefulWidget {
   @override
-  _taskMenuState createState() => _taskMenuState();
+  _TaskMenuState createState() => _TaskMenuState();
 }
 
-class _taskMenuState extends State<taskMenu> {
+class _TaskMenuState extends State<TaskMenu> {
 
 
   final tabs = [
@@ -37,9 +37,9 @@ class _taskMenuState extends State<taskMenu> {
             backgroundColor:  Color.fromRGBO(127, 235, 249, 1),
             bottom: TabBar(
               tabs: const [
-                Tab(text: 'Unassigned' ),
-                Tab(text: 'Assigned'),
-                Tab(text: 'History'),
+                Tab(child: Text('Unassigned',style: TextStyle(fontSize: 17))),
+                Tab(child: Text('Assigned',style: TextStyle(fontSize: 17))),
+                Tab(child: Text('History',style: TextStyle(fontSize: 17))),
               ],
             ),
             leading:  Padding(
@@ -58,13 +58,13 @@ class _taskMenuState extends State<taskMenu> {
             title: Padding(
               padding: EdgeInsets.only(top: 15),
               child: Text(
-                  'Tasks',
-                  style: GoogleFonts.bebasNeue(
-                    textStyle: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  )
+                'Tasks',
+                style: GoogleFonts.bebasNeue(
+                  textStyle: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                )
               ),
             ),
           ),
