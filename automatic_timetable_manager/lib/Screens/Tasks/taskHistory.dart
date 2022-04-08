@@ -38,13 +38,7 @@ class _TaskHistoryState extends State<TaskHistory> {
                     onPressed: (){
 
                     },
-                    child: button.myShortIconButton(
-                        'Sort by',
-                        30,
-                        Color.fromRGBO(55, 147, 159, 1),
-                        'assets/img/sortIcon.png',
-                        context
-                    ),
+                    child: button.myShortIconButton('Sort by',30, Color.fromRGBO(55, 147, 159, 1), 'assets/img/sortIcon.png', context),
                   ),
 
                   SizedBox(width: screen.height*0.02,),
@@ -54,13 +48,7 @@ class _TaskHistoryState extends State<TaskHistory> {
                     onPressed: (){
 
                     },
-                    child: button.myShortIconButton(
-                        'Date',
-                        30,
-                        Color.fromRGBO(55, 147, 159, 1),
-                        'assets/img/dateIcon.png',
-                        context
-                    ),
+                    child: button.myShortIconButton('Date',30,Color.fromRGBO(55, 147, 159, 1),'assets/img/dateIcon.png', context),
                   ),
                 ],
               ),

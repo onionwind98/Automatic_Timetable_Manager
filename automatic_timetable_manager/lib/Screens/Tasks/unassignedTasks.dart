@@ -104,21 +104,40 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: screen.height*0.01),
-            //Add Task Button
-            MaterialButton(
-              onPressed: (){
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => AddTask())
-                );
-              },
-              child: button.myLongButton('Add Tasks', Color.fromRGBO(55, 147, 159, 1),context),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                //Sort by Button
+                MaterialButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: (){
+
+                  },
+                  child: button.myShortIconButton('Sort by',30, Color.fromRGBO(55, 147, 159, 1), 'assets/img/sortIcon.png', context),
+                ),
+
+                SizedBox(width: screen.height*0.02,),
+
+                //Add Task Button
+                MaterialButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: (){
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (context) => AddTask())
+                    ).then((value) => {
+                      loadTask()
+                    });
+                  },
+                  child: button.myShortIconButton('Add Tasks',27, Color.fromRGBO(214, 93, 93, 1),'assets/img/addIcon.png', context),
+                ),
+              ],
             ),
 
             SizedBox(height: screen.height*0.01),
             Container(
               decoration: boxDeco.whiteBoxDecoration(Color.fromRGBO(127, 235, 249, 1)),
               height: (screen.height*0.68),
-              width: (screen.width*0.9),
+              width: (screen.width*0.95),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -126,7 +145,7 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
                   //List of tasks
                   Container(
                     height: screen.height*0.57,
-                    width: screen.width*0.9,
+                    width: screen.width*0.95,
                     padding: EdgeInsets.only(left:10,top: 10),
                     child: SingleChildScrollView(
                       child: StreamBuilder<dynamic> (
@@ -168,7 +187,7 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
                                       child: Container(
                                         alignment: Alignment.center,
                                         height: screen.height * 0.1,
-                                        width: screen.width * 0.85,
+                                        width: screen.width * 0.9,
                                         decoration: BoxDecoration(
                                           color: Colors.white,
                                           borderRadius: BorderRadius.circular(30.0),

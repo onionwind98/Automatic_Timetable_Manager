@@ -38,7 +38,7 @@ class MyButton {
     return Container(
       alignment: Alignment.center,
       height: screen.height * 0.08,
-      width: screen.width * 0.42,
+      width: screen.width * 0.45,
       decoration: BoxDecoration(
         // border: Border.all(color: Colors.black,width: 3.0),
         color: buttonColor,
