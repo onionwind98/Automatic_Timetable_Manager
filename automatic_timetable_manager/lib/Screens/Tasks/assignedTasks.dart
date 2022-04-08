@@ -33,24 +33,29 @@ class _AssignedTasksState extends State<AssignedTasks> {
                 children: [
                   //Sort by Button
                     MaterialButton(
+                      padding: EdgeInsets.zero,
                       onPressed: (){
 
                       },
                       child: button.myShortIconButton(
                           'Sort by',
+                          30,
                           Color.fromRGBO(55, 147, 159, 1),
                           'assets/img/sortIcon.png',
                           context
                       ),
                     ),
 
+                  SizedBox(width: screen.height*0.02,),
                   //Date Selection Button
                   MaterialButton(
+                    padding: EdgeInsets.zero,
                     onPressed: (){
 
                     },
                     child: button.myShortIconButton(
                         'Date',
+                        30,
                         Color.fromRGBO(55, 147, 159, 1),
                         'assets/img/dateIcon.png',
                         context
@@ -62,7 +67,7 @@ class _AssignedTasksState extends State<AssignedTasks> {
               SizedBox(height: screen.height*0.02),
               Container(
                 decoration: boxDeco.whiteBoxDecoration(Color.fromRGBO(127, 235, 249, 1)),
-                height: (screen.height*0.67),
+                height: (screen.height*0.65),
                 width: (screen.width*0.9),
                 child: Column(
                   children: [

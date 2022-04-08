@@ -39,6 +39,7 @@ dependencies:
   shared_preferences: ^2.0.13
   syncfusion_flutter_sliders: ^20.1.47
   syncfusion_flutter_core: ^20.1.47
+  flutter_slidable: ^1.2.0
 
 
 dev_dependencies:

@@ -6,7 +6,7 @@ class MyButton {
     Size screen = MediaQuery.of(context).size;
     return Container(
       alignment: Alignment.center,
-      height: 60,
+      height: screen.height*0.08,
       width: screen.width * 0.9,
       decoration: BoxDecoration(
         // border: Border.all(color: Colors.black,width: 3.0),
@@ -33,12 +33,12 @@ class MyButton {
     );
   }
 
-  myShortIconButton(String buttonTitle, Color buttonColor, String icon, BuildContext context){
+  myShortIconButton(String buttonTitle, double fontSize, Color buttonColor, String icon, BuildContext context){
     Size screen = MediaQuery.of(context).size;
     return Container(
       alignment: Alignment.center,
-      height: screen.height * 0.06,
-      width: screen.width * 0.4,
+      height: screen.height * 0.08,
+      width: screen.width * 0.42,
       decoration: BoxDecoration(
         // border: Border.all(color: Colors.black,width: 3.0),
         color: buttonColor,
@@ -53,7 +53,7 @@ class MyButton {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.only(left: 25.0,top: 8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -62,13 +62,12 @@ class MyButton {
               textAlign: TextAlign.center,
               style: GoogleFonts.bebasNeue(
                 textStyle:TextStyle(
-                  fontSize: 30,
+                  fontSize: fontSize,
                   fontWeight: FontWeight.bold,
                   color: Colors.white
                 ),
               )
             ),
-            SizedBox(width: 10),
             Container(
               height: screen.height * 0.15,
               child: Image.asset(icon),

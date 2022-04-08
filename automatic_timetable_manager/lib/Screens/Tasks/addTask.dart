@@ -1,11 +1,15 @@
+import 'dart:convert';
+
 import 'package:automatic_timetable_manager/Shared/myBoxDecoration.dart';
 import 'package:automatic_timetable_manager/Shared/myTextField.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
+import '../../Database/api.dart';
 import '../../Shared/myButton.dart';
 
 class AddTask extends StatefulWidget {
@@ -17,19 +21,24 @@ class _AddTaskState extends State<AddTask> {
   MyButton button = MyButton();
   MyTextField textField = MyTextField();
   MyBoxDecoration boxDeco = MyBoxDecoration();
+  Api api = Api();
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  FixedExtentScrollController startHourController =FixedExtentScrollController(initialItem: 0);
-  FixedExtentScrollController startMinuteController =FixedExtentScrollController(initialItem: 0);
-  FixedExtentScrollController endHourController =FixedExtentScrollController(initialItem: 0);
-  FixedExtentScrollController endMinuteController =FixedExtentScrollController(initialItem: 0);
+  // FixedExtentScrollController startHourController =FixedExtentScrollController(initialItem: 0);
+  // FixedExtentScrollController startMinuteController =FixedExtentScrollController(initialItem: 0);
+  // FixedExtentScrollController endHourController =FixedExtentScrollController(initialItem: 0);
+  // FixedExtentScrollController endMinuteController =FixedExtentScrollController(initialItem: 0);
+
+  // List hour=['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23'];
+  // List minute=['00','30'];
 
   late double priorityLevel;
   late bool preferredTimeCheck;
   late bool repeatOnCheck;
-  List hour=['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23'];
-  List minute=['00','30'];
   late List repeatList;
+  late String startPreferredTime;
+  late String endPreferredTime;
+
 
   @override
   void initState(){
@@ -38,6 +47,8 @@ class _AddTaskState extends State<AddTask> {
     preferredTimeCheck=false;
     repeatOnCheck=false;
     repeatList=[];
+    startPreferredTime='00:00';
+    endPreferredTime="00:00";
   }
 
   @override
@@ -52,41 +63,42 @@ class _AddTaskState extends State<AddTask> {
     Size screen = MediaQuery.of(context).size;
     SfRangeValues _initialValues = SfRangeValues(1.0,1.0);
 
-    Widget showPreferredTimeSlider(FixedExtentScrollController sliderController, List item){
-      bool hourOrMin;
-      return AbsorbPointer(
-        absorbing: preferredTimeCheck ? false : true,
-        child: CupertinoPicker(
-          scrollController: sliderController,
-          itemExtent: screen.height*0.06,
-          backgroundColor: Colors.white,
-          onSelectedItemChanged: (int value) {
-            if(item==hour){
-              print(sliderController.selectedItem.toString().padLeft(2,'0'));
-            }else{
-              if(sliderController.selectedItem==0){
-                print('00');
-              }else{
-                print('30');
-              }
-            }
-          },
-          children: [
-            for (var i = 0;
-            i < item.length;
-            i++)
-              Padding(
-                padding: EdgeInsets.all(10),
-                child: Text(
-                  item[i],
-                  style: TextStyle(color: preferredTimeCheck? Colors.black : Colors.black12),
-                ),
-              )
-          ],
 
-        ),
-      );
-    }
+    // Widget showPreferredTimeSlider(FixedExtentScrollController sliderController, List item){
+    //   bool hourOrMin;
+    //   return AbsorbPointer(
+    //     absorbing: preferredTimeCheck ? false : true,
+    //     child: CupertinoPicker(
+    //       scrollController: sliderController,
+    //       itemExtent: screen.height*0.06,
+    //       backgroundColor: Colors.white,
+    //       onSelectedItemChanged: (int value) {
+    //         if(item==hour){
+    //           print(sliderController.selectedItem.toString().padLeft(2,'0'));
+    //         }else{
+    //           if(sliderController.selectedItem==0){
+    //             print('00');
+    //           }else{
+    //             print('30');
+    //           }
+    //         }
+    //       },
+    //       children: [
+    //         for (var i = 0;
+    //         i < item.length;
+    //         i++)
+    //           Padding(
+    //             padding: EdgeInsets.all(10),
+    //             child: Text(
+    //               item[i],
+    //               style: TextStyle(color: preferredTimeCheck? Colors.black : Colors.black12),
+    //             ),
+    //           )
+    //       ],
+    //
+    //     ),
+    //   );
+    // }
 
     Widget showRepeatOnButton(String day){
       Color color;
@@ -240,7 +252,7 @@ class _AddTaskState extends State<AddTask> {
                 //Preferred Time
                 SizedBox(height: screen.height*0.03),
                 Container(
-                  height: screen.height*0.18,
+                  height: screen.height*0.2,
                   width: screen.width*0.9,
                   decoration: boxDeco.whiteBoxDecoration(Colors.white),
                   child: Column(
@@ -283,63 +295,110 @@ class _AddTaskState extends State<AddTask> {
                       Row(
                         children: [
                           SizedBox(width: screen.width*0.03),
-                          //Start time
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(40.0),
-                            ),
-                            width: screen.width*0.18,
-                            child: showPreferredTimeSlider(startHourController,hour)
-                          ),
-                          Text(
-                            ':',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(40.0),
-                            ),
-                            width: screen.width*0.18,
-                            child: showPreferredTimeSlider(startMinuteController,minute)
-                          ),
-
-                          //Dash
-                          Container(
-                            height: 5,
-                            width: 20,
-                            decoration: BoxDecoration(
-                              color: Colors.black38,
-                              borderRadius: BorderRadius.circular(40.0),
+                          AbsorbPointer(
+                            absorbing: preferredTimeCheck ? false : true,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(40)
+                              ),
+                              width: screen.width*0.4,
+                              height: screen.width*0.2,
+                              child: CupertinoDatePicker(
+                                mode: CupertinoDatePickerMode.time,
+                                initialDateTime: DateTime( 0, 0),
+                                minuteInterval:30,
+                                onDateTimeChanged: (DateTime newDateTime) {
+                                  setState(() {
+                                    startPreferredTime=newDateTime.hour.toString().padLeft(2,'0')+':'+newDateTime.minute.toString().padLeft(2,'0');
+                                  });
+                                  print('time:'+startPreferredTime);
+                                },
+                                use24hFormat: true,
+                              ),
                             ),
                           ),
 
-                          //End Time
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(40.0),
+                          SizedBox(width: screen.width*0.03),
+                          AbsorbPointer(
+                            absorbing: preferredTimeCheck ? false : true,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(40)
+                              ),
+                              width: screen.width*0.4,
+                              height: screen.width*0.2,
+                              child: CupertinoDatePicker(
+                                mode: CupertinoDatePickerMode.time,
+                                initialDateTime: DateTime( 0, 0),
+                                minuteInterval:30,
+                                onDateTimeChanged: (DateTime newDateTime) {
+                                  setState(() {
+                                    endPreferredTime=newDateTime.hour.toString().padLeft(2,'0')+':'+newDateTime.minute.toString().padLeft(2,'0');
+                                  });
+                                  print('time:'+endPreferredTime);
+                                },
+                                use24hFormat: true,
+                              ),
                             ),
-                            width: screen.width*0.18,
-                            child: showPreferredTimeSlider(endHourController,hour)
                           ),
-                          Text(
-                            ':',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(40.0),
-                            ),
-                            width: screen.width*0.18,
-                            child: showPreferredTimeSlider(endMinuteController,minute)
-                          ),
+
+                          // Start time
+                          // Container(
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(40.0),
+                          //   ),
+                          //   width: screen.width*0.18,
+                          //   child: showPreferredTimeSlider(startHourController,hour)
+                          // ),
+                          // Text(
+                          //   ':',
+                          //   style: TextStyle(
+                          //     color: Colors.black,
+                          //     fontSize: 20,
+                          //     fontWeight: FontWeight.bold
+                          //   ),
+                          // ),
+                          // Container(
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(40.0),
+                          //   ),
+                          //   width: screen.width*0.18,
+                          //   child: showPreferredTimeSlider(startMinuteController,minute)
+                          // ),
+                          //
+                          // //Dash
+                          // Container(
+                          //   height: 5,
+                          //   width: 20,
+                          //   decoration: BoxDecoration(
+                          //     color: Colors.black38,
+                          //     borderRadius: BorderRadius.circular(40.0),
+                          //   ),
+                          // ),
+                          //
+                          // //End Time
+                          // Container(
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(40.0),
+                          //   ),
+                          //   width: screen.width*0.18,
+                          //   child: showPreferredTimeSlider(endHourController,hour)
+                          // ),
+                          // Text(
+                          //   ':',
+                          //   style: TextStyle(
+                          //       color: Colors.black,
+                          //       fontSize: 20,
+                          //       fontWeight: FontWeight.bold
+                          //   ),
+                          // ),
+                          // Container(
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(40.0),
+                          //   ),
+                          //   width: screen.width*0.18,
+                          //   child: showPreferredTimeSlider(endMinuteController,minute)
+                          // ),
 
                         ],
                       )
@@ -418,11 +477,65 @@ class _AddTaskState extends State<AddTask> {
 
                 SizedBox(height: screen.height*0.03),
                 MaterialButton(
-                  onPressed: (){
-
+                  onPressed: () async{
+                    SharedPreferences localStorage = await SharedPreferences.getInstance();
+                    var userID = localStorage.getInt('userID');
+                    List preferredTime = preferredTimeCheck ? [startPreferredTime,endPreferredTime] : [];
+                    Map data = {
+                      'userID':userID,
+                      'title':titleController.text,
+                      'priorityLevel':priorityLevel,
+                      'description':descriptionController.text,
+                      'status': false,
+                      'preferredTime':jsonEncode(preferredTime),
+                      'repeatOn':jsonEncode(repeatList),
+                    };
+                    print(data);
+                    if(data['title']==''){
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Empty title!"),
+                              content: Text("Please fill give the task a title."),
+                              actions: [
+                                MaterialButton(
+                                  child: Text('OK'),
+                                  onPressed: (){
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ],
+                            );
+                          }
+                      );
+                    }else{
+                      api.postData('addTask', data).then((value) {
+                        print(value);
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Task added!"),
+                                content: Text("The new task had been added!"),
+                                actions: [
+                                  MaterialButton(
+                                    child: Text('OK'),
+                                    onPressed: (){
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              );
+                            }
+                        );
+                      });
+                    }
                   },
                   child: button.myShortIconButton(
                       'Add Task',
+                      30,
                       Color.fromRGBO(55, 147, 159, 1),
                       'assets/img/forwardButton.png',
                       context

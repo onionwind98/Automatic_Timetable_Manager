@@ -30,6 +30,7 @@ class _TaskMenuState extends State<TaskMenu> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(90.0),
@@ -70,6 +71,7 @@ class _TaskMenuState extends State<TaskMenu> {
           ),
         ),
         body: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
           children: [
             UnassignedTasks(),
             AssignedTasks(),

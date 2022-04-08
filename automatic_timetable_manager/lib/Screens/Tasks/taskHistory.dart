@@ -34,24 +34,29 @@ class _TaskHistoryState extends State<TaskHistory> {
                 children: [
                   //Sort by Button
                   MaterialButton(
+                    padding: EdgeInsets.zero,
                     onPressed: (){
 
                     },
                     child: button.myShortIconButton(
                         'Sort by',
+                        30,
                         Color.fromRGBO(55, 147, 159, 1),
                         'assets/img/sortIcon.png',
                         context
                     ),
                   ),
 
+                  SizedBox(width: screen.height*0.02,),
                   //Date Selection Button
                   MaterialButton(
+                    padding: EdgeInsets.zero,
                     onPressed: (){
 
                     },
                     child: button.myShortIconButton(
                         'Date',
+                        30,
                         Color.fromRGBO(55, 147, 159, 1),
                         'assets/img/dateIcon.png',
                         context
