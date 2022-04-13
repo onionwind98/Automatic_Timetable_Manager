@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:automatic_timetable_manager/Shared/myBoxDecoration.dart';
-import 'package:automatic_timetable_manager/Shared/myTextField.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,14 +8,19 @@ import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import '../../Database/api.dart';
+import '../../Shared/myBoxDecoration.dart';
 import '../../Shared/myButton.dart';
+import '../../Shared/myTextField.dart';
 
-class AddTask extends StatefulWidget {
+class EditTask extends StatefulWidget {
+  Map editItem;
+  EditTask({Key? key, required this.editItem}) : super(key: key);
+
   @override
-  _AddTaskState createState() => _AddTaskState();
+  _EditTaskState createState() => _EditTaskState();
 }
 
-class _AddTaskState extends State<AddTask> {
+class _EditTaskState extends State<EditTask> {
   MyButton button = MyButton();
   MyTextField textField = MyTextField();
   MyBoxDecoration boxDeco = MyBoxDecoration();
@@ -31,17 +34,44 @@ class _AddTaskState extends State<AddTask> {
   late List repeatList;
   late String startPreferredTime;
   late String endPreferredTime;
-
+  late List startTime, endTime;
 
   @override
   void initState(){
+    print(widget.editItem);
     super.initState();
-    priorityLevel=1.0;
-    preferredTimeCheck=false;
-    repeatOnCheck=false;
-    repeatList=[];
-    startPreferredTime='00:00';
-    endPreferredTime="00:00";
+    titleController.text=widget.editItem['title'];
+    priorityLevel=widget.editItem['priorityLevel'].toDouble();
+
+    if(widget.editItem['description']==null){
+      descriptionController.text="";
+    }else{
+      descriptionController.text=widget.editItem['description'].toString();
+    }
+
+    List preferredTime=jsonDecode(widget.editItem['preferredTime']);
+    if(preferredTime.isEmpty){
+      preferredTimeCheck=false;
+      startPreferredTime='00:00';
+      endPreferredTime="00:00";
+      startTime=startPreferredTime.split(":");
+      endTime=endPreferredTime.split(":");
+    }else{
+      preferredTimeCheck=true;
+      startPreferredTime=preferredTime[0];
+      endPreferredTime=preferredTime[1];
+      startTime=startPreferredTime.split(":");
+      endTime=endPreferredTime.split(":");
+    }
+
+    if(widget.editItem['repeatOn'].isEmpty){
+      repeatOnCheck=false;
+      repeatList=[];
+    }else{
+      repeatOnCheck=true;
+      repeatList=jsonDecode(widget.editItem['repeatOn']);
+    }
+
   }
 
   @override
@@ -49,48 +79,61 @@ class _AddTaskState extends State<AddTask> {
     super.dispose();
   }
 
+  deleteTask(int taskID, BuildContext context) async {
+    print(taskID);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Confirmation"),
+            content: Text("Are you sure you want to delete the task?"),
+            actions: [
+              MaterialButton(
+                child: Text('YES'),
+                onPressed: (){
+                  Map data ={
+                    'taskID':taskID
+                  };
+                  api.postData('deleteTask', data).then((value) {
+                    print(value);
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Task Deleted!"),
+                            content: Text("The task is successfully deleted!"),
+                            actions: [
+                              MaterialButton(
+                                child: Text('OK'),
+                                onPressed: (){
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          );
+                        }
+                    );
+                  });
+                },
+              ),
+              MaterialButton(
+                child: Text('NO'),
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        }
+    );
 
+  }
 
   @override
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
-
-
-    // Widget showPreferredTimeSlider(FixedExtentScrollController sliderController, List item){
-    //   bool hourOrMin;
-    //   return AbsorbPointer(
-    //     absorbing: preferredTimeCheck ? false : true,
-    //     child: CupertinoPicker(
-    //       scrollController: sliderController,
-    //       itemExtent: screen.height*0.06,
-    //       backgroundColor: Colors.white,
-    //       onSelectedItemChanged: (int value) {
-    //         if(item==hour){
-    //           print(sliderController.selectedItem.toString().padLeft(2,'0'));
-    //         }else{
-    //           if(sliderController.selectedItem==0){
-    //             print('00');
-    //           }else{
-    //             print('30');
-    //           }
-    //         }
-    //       },
-    //       children: [
-    //         for (var i = 0;
-    //         i < item.length;
-    //         i++)
-    //           Padding(
-    //             padding: EdgeInsets.all(10),
-    //             child: Text(
-    //               item[i],
-    //               style: TextStyle(color: preferredTimeCheck? Colors.black : Colors.black12),
-    //             ),
-    //           )
-    //       ],
-    //
-    //     ),
-    //   );
-    // }
 
     Widget showRepeatOnButton(String day){
       Color color;
@@ -142,13 +185,13 @@ class _AddTaskState extends State<AddTask> {
                   children: [
                     SizedBox(width: screen.width*0.33),
                     Text(
-                      'Add Tasks',
-                      style: GoogleFonts.bebasNeue(
-                        textStyle: TextStyle(
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      )
+                        'Edit Tasks',
+                        style: GoogleFonts.bebasNeue(
+                          textStyle: TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        )
                     ),
                     SizedBox(width: screen.width*0.1),
                     GestureDetector(
@@ -181,9 +224,9 @@ class _AddTaskState extends State<AddTask> {
                         child: Text(
                           'Priority Level',
                           style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black54
                           ),
                         ),
                       ),
@@ -196,8 +239,8 @@ class _AddTaskState extends State<AddTask> {
                             thumbStrokeWidth: 2,
                             thumbStrokeColor: Colors.black54,
                             activeLabelStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
                                 color: Colors.black54
                             ),
                             inactiveLabelStyle: TextStyle(
@@ -268,15 +311,15 @@ class _AddTaskState extends State<AddTask> {
                             Transform.scale(
                               scale: 1.5,
                               child: Checkbox(
-                                value: preferredTimeCheck,
-                                checkColor: Colors.white,
-                                activeColor: Color.fromRGBO(127, 235, 249, 1),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-                                onChanged: (newValue){
-                                  setState(() {
-                                    preferredTimeCheck=newValue!;
-                                  });
-                                }
+                                  value: preferredTimeCheck,
+                                  checkColor: Colors.white,
+                                  activeColor: Color.fromRGBO(127, 235, 249, 1),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                                  onChanged: (newValue){
+                                    setState(() {
+                                      preferredTimeCheck=newValue!;
+                                    });
+                                  }
                               ),
                             )
                           ],
@@ -297,7 +340,7 @@ class _AddTaskState extends State<AddTask> {
                               height: screen.width*0.2,
                               child: CupertinoDatePicker(
                                 mode: CupertinoDatePickerMode.time,
-                                initialDateTime: DateTime( 0, 0),
+                                initialDateTime: DateTime(1969, 1, 1, int.parse(startTime[0]), int.parse(startTime[1])),
                                 minuteInterval:30,
                                 onDateTimeChanged: (DateTime newDateTime) {
                                   setState(() {
@@ -321,7 +364,7 @@ class _AddTaskState extends State<AddTask> {
                               height: screen.width*0.2,
                               child: CupertinoDatePicker(
                                 mode: CupertinoDatePickerMode.time,
-                                initialDateTime: DateTime( 0, 0),
+                                initialDateTime:DateTime(1969, 1, 1, int.parse(endTime[0]), int.parse(endTime[1])),
                                 minuteInterval:30,
                                 onDateTimeChanged: (DateTime newDateTime) {
                                   setState(() {
@@ -333,64 +376,6 @@ class _AddTaskState extends State<AddTask> {
                               ),
                             ),
                           ),
-
-                          // Start time
-                          // Container(
-                          //   decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.circular(40.0),
-                          //   ),
-                          //   width: screen.width*0.18,
-                          //   child: showPreferredTimeSlider(startHourController,hour)
-                          // ),
-                          // Text(
-                          //   ':',
-                          //   style: TextStyle(
-                          //     color: Colors.black,
-                          //     fontSize: 20,
-                          //     fontWeight: FontWeight.bold
-                          //   ),
-                          // ),
-                          // Container(
-                          //   decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.circular(40.0),
-                          //   ),
-                          //   width: screen.width*0.18,
-                          //   child: showPreferredTimeSlider(startMinuteController,minute)
-                          // ),
-                          //
-                          // //Dash
-                          // Container(
-                          //   height: 5,
-                          //   width: 20,
-                          //   decoration: BoxDecoration(
-                          //     color: Colors.black38,
-                          //     borderRadius: BorderRadius.circular(40.0),
-                          //   ),
-                          // ),
-                          //
-                          // //End Time
-                          // Container(
-                          //   decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.circular(40.0),
-                          //   ),
-                          //   width: screen.width*0.18,
-                          //   child: showPreferredTimeSlider(endHourController,hour)
-                          // ),
-                          // Text(
-                          //   ':',
-                          //   style: TextStyle(
-                          //       color: Colors.black,
-                          //       fontSize: 20,
-                          //       fontWeight: FontWeight.bold
-                          //   ),
-                          // ),
-                          // Container(
-                          //   decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.circular(40.0),
-                          //   ),
-                          //   width: screen.width*0.18,
-                          //   child: showPreferredTimeSlider(endMinuteController,minute)
-                          // ),
 
                         ],
                       )
@@ -467,71 +452,95 @@ class _AddTaskState extends State<AddTask> {
                   ),
                 ),
 
+                //Delete Task & Save Edit button
                 SizedBox(height: screen.height*0.03),
-                MaterialButton(
-                  onPressed: () async{
-                    SharedPreferences localStorage = await SharedPreferences.getInstance();
-                    var userID = localStorage.getInt('userID');
-                    List preferredTime = preferredTimeCheck ? [startPreferredTime,endPreferredTime] : [];
-                    Map data = {
-                      'userID':userID,
-                      'title':titleController.text,
-                      'priorityLevel':priorityLevel,
-                      'description':descriptionController.text,
-                      'status': false,
-                      'preferredTime':jsonEncode(preferredTime),
-                      'repeatOn':jsonEncode(repeatList),
-                    };
-                    print(data);
-                    if(data['title']==''){
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text("Empty title!"),
-                              content: Text("Please fill give the task a title."),
-                              actions: [
-                                MaterialButton(
-                                  child: Text('OK'),
-                                  onPressed: (){
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    //Delete Task Button
+                    MaterialButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () async{
+                        deleteTask(widget.editItem['taskID'],context);
+                      },
+                      child: button.myShortIconButton(
+                          'Delete Task',
+                          27,
+                          Color.fromRGBO(214, 93, 93, 1),
+                          'assets/img/forwardButton.png',
+                          context
+                      ),
+                    ),
+
+                    SizedBox(width: screen.height*0.01),
+
+                    //Save Edit Button
+                    MaterialButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () async{
+                        SharedPreferences localStorage = await SharedPreferences.getInstance();
+                        var userID = localStorage.getInt('userID');
+                        List preferredTime = preferredTimeCheck ? [startPreferredTime,endPreferredTime] : [];
+                        Map data = {
+                          'taskID':widget.editItem['taskID'],
+                          'title':titleController.text,
+                          'priorityLevel':priorityLevel,
+                          'description':descriptionController.text,
+                          'preferredTime':jsonEncode(preferredTime),
+                          'repeatOn':jsonEncode(repeatList),
+                        };
+                        print(data);
+                        if(data['title']==''){
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Empty title!"),
+                                  content: Text("Please fill give the task a title."),
+                                  actions: [
+                                    MaterialButton(
+                                      child: Text('OK'),
+                                      onPressed: (){
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              }
+                          );
+                        }else{
+                          api.postData('editTask', data).then((value) {
+                            print(value);
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Task edited!"),
+                                    content: Text("The task had been edited!"),
+                                    actions: [
+                                      MaterialButton(
+                                        child: Text('OK'),
+                                        onPressed: (){
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                }
                             );
-                          }
-                      );
-                    }else{
-                      api.postData('addTask', data).then((value) {
-                        print(value);
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text("Task added!"),
-                                content: Text("The new task had been added!"),
-                                actions: [
-                                  MaterialButton(
-                                    child: Text('OK'),
-                                    onPressed: (){
-                                      Navigator.pop(context);
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                ],
-                              );
-                            }
-                        );
-                      });
-                    }
-                  },
-                  child: button.myShortIconButton(
-                      'Add Task',
-                      30,
-                      Color.fromRGBO(55, 147, 159, 1),
-                      'assets/img/forwardButton.png',
-                      context
-                  ),
+                          });
+                        }
+                      },
+                      child: button.myShortIconButton(
+                          'Save Edit',
+                          27,
+                          Color.fromRGBO(55, 147, 159, 1),
+                          'assets/img/forwardButton.png',
+                          context
+                      ),
+                    ),
+                  ],
                 ),
 
                 SizedBox(height: screen.height*0.1),

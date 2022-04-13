@@ -12,7 +12,7 @@ class MyTextField {
     return Container(
       height: height,
       width: width,
-      decoration: boxDeco.whiteBoxDecoration(Colors.white),
+      decoration: boxDeco.myBoxDecoration(Colors.white),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

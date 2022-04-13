@@ -66,7 +66,7 @@ class _AssignedTasksState extends State<AssignedTasks> {
 
               SizedBox(height: screen.height*0.02),
               Container(
-                decoration: boxDeco.whiteBoxDecoration(Color.fromRGBO(127, 235, 249, 1)),
+                decoration: boxDeco.myBoxDecoration(Color.fromRGBO(127, 235, 249, 1)),
                 height: (screen.height*0.65),
                 width: (screen.width*0.9),
                 child: Column(

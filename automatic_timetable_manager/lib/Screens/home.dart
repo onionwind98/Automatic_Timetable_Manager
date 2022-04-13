@@ -68,7 +68,7 @@ class _HomeState extends State<Home> {
                   Positioned(
                     //Blue Background
                     child: Container(
-                      decoration: boxDeco.whiteBoxDecoration(Color.fromRGBO(127, 235, 249, 1)),
+                      decoration: boxDeco.myBoxDecoration(Color.fromRGBO(127, 235, 249, 1)),
                       height: (screen.height*0.8),
                       width: (screen.width*0.95),
                       child: Column(
