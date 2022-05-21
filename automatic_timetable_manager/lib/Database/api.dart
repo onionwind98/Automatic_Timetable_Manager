@@ -40,8 +40,6 @@ class Api {
     return jsonResponse;
   }
 
-
-
   _getToken() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var token = localStorage.getString('token');

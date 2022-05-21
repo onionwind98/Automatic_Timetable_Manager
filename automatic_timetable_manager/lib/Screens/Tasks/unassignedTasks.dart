@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
-import 'package:automatic_timetable_manager/Screens/Tasks/addTask.dart';
+import 'dart:convert';
+
+import 'package:automatic_timetable_manager/Screens/Tasks/createTask.dart';
 import 'package:automatic_timetable_manager/Screens/Tasks/editTask.dart';
 import 'package:automatic_timetable_manager/Shared/appBar.dart';
 import 'package:automatic_timetable_manager/Shared/myButton.dart';
@@ -9,12 +11,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
+import 'package:flutter_date_pickers/flutter_date_pickers.dart';
 
 import '../../Database/api.dart';
 import '../../Shared/myBoxDecoration.dart';
+import '../Timetable/timetableMenu.dart';
 
 class UnassignedTasks extends StatefulWidget{
+
   @override
   _UnassignedTasksState createState() => _UnassignedTasksState();
 }
@@ -27,6 +33,12 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
   late List unassignedTaskList;
   late bool sortTrigger;
   late String sortOption;
+  late List selectedTask;
+
+  late Map selectedDate;
+  final DateTime firstDate = DateTime.now().subtract(Duration(days: 45));
+  final DateTime lastDate = DateTime.now().add(Duration(days: 45));
+  // DatePeriod? _selectedPeriod;
 
   void initState(){
     super.initState();
@@ -34,6 +46,13 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
     sortTrigger=true;
     sortOption='TitleAscending';
     loadTask();
+    selectedTask=[];
+    //set default week selected to this week for date picker on reschedule button
+    var sunday = DateTime.now().subtract(Duration(days: DateTime.now().weekday));
+    selectedDate={
+      'startDate':sunday,
+      'endDate':sunday.add(Duration(days: 6)),
+    };
   }
 
   @override
@@ -42,11 +61,21 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
   }
 
   loadTask() async{
-    api.getData('getTask').then((res) async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var userID = localStorage.getInt('userID');
+    Map data={
+      'userID':userID,
+    };
+    api.postData('getUnassignedTask',data).then((res) async{
+      // print(res);
       setState(() {
         unassignedTaskList = List.from(res);
+        for(int i=0; i < unassignedTaskList.length;i++){
+          unassignedTaskList[i]['selectedStatus']=false;
+        }
         sortFunction.sortFunction(unassignedTaskList, sortOption);
-        print(res);
+
+        // print(unassignedTaskList);
       });
     });
   }
@@ -102,6 +131,123 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
     );
   }
 
+  Widget displayDatePicker(){
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(32.0))
+      ),
+      backgroundColor: Color.fromRGBO(55, 147, 159, 1),
+      actionsAlignment:MainAxisAlignment.center,
+      title: Text(
+        'Choose a week to add tasks into timetable',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            fontSize: 25,
+            color: Colors.white
+        ),
+      ),
+      content: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState){
+            return WeekPicker(
+              selectedDate: selectedDate['startDate'],
+              onChanged: (DatePeriod newPeriod){
+                setState(() {
+                  print(newPeriod.start);
+                  selectedDate['startDate'] = newPeriod.start;
+                  selectedDate['endDate'] = newPeriod.end;
+                  // _selectedPeriod = newPeriod;
+                });
+              },
+              firstDate: firstDate,
+              lastDate: lastDate,
+              datePickerStyles: DatePickerRangeStyles(
+                  defaultDateTextStyle:TextStyle(
+                      color: Colors.white
+                  ),
+                  displayedPeriodTitle:TextStyle(
+                      color: Colors.white
+                  ),
+                  currentDateStyle:TextStyle(
+                      color: Colors.white
+                  ),
+                  dayHeaderStyle: DayHeaderStyle(
+                      textStyle: TextStyle(
+                          color: Colors.white
+                      )
+                  )
+              ),
+              datePickerLayoutSettings: DatePickerLayoutSettings(
+                scrollPhysics: NeverScrollableScrollPhysics(),
+                showPrevMonthEnd: true,
+                showNextMonthStart: true,
+              ),
+            );
+          }
+      ),
+      actions: [
+        MaterialButton(
+          child: button.myAlertActionButton('Confirm Week', Colors.white, Colors.black, context),
+
+          onPressed: () async {
+            // print(selectedDate['startDate'].toString()+selectedDate['endDate'].toString());
+            selectedTask.clear();
+            for(int i=0; i < unassignedTaskList.length; i++){
+              if(unassignedTaskList[i]['selectedStatus']){
+                selectedTask.add(unassignedTaskList[i]);
+              }
+            }
+            selectedTask=sortFunction.sortFunction(selectedTask, 'PriorityDescending');
+            print('SELECTED TASK: '+selectedTask.toString());
+
+
+            SharedPreferences localStorage = await SharedPreferences.getInstance();
+            var userID = localStorage.getInt('userID');
+
+            List dateRange = [];
+            //get target week date from Sunday to Monday
+            for(int i=0;i<7;i++){
+              List temp=selectedDate['startDate'].add(Duration(days: i)).toString().split(" ");
+              dateRange.add(temp[0]);
+            }
+
+            Map data = {
+              'userID':userID,
+              'taskList':selectedTask,
+              'dateRange':dateRange,
+            };
+
+
+            api.postData('addToTimetable', data).then((value) {
+              print(value);
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Task had been added!"),
+                      content: Text("The selected task had been added to the timetable!"),
+                      actions: [
+                        MaterialButton(
+                          child: Text('OK'),
+                          onPressed: (){
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                            loadTask();
+                            Navigator.push(
+                                context, MaterialPageRoute(builder: (context) => TimetableMenu(tabSelector: 0))
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  }
+              );
+            });
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
@@ -115,6 +261,7 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            //Sort and Add task Button
             SizedBox(height: screen.height*0.01),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -169,12 +316,12 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
                   padding: EdgeInsets.zero,
                   onPressed: (){
                     Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => AddTask())
+                        context, MaterialPageRoute(builder: (context) => CreateTask(fromDuplicate: false,))
                     ).then((value) => {
                       loadTask()
                     });
                   },
-                  child: button.myShortIconButton('Add Tasks',27, Color.fromRGBO(214, 93, 93, 1),'assets/img/addIcon.png', context),
+                  child: button.myShortIconButton('Create \nTasks',25, Color.fromRGBO(214, 93, 93, 1),'assets/img/addIcon.png', context),
                 ),
               ],
             ),
@@ -253,12 +400,27 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
                                         ],
                                       ),
                                       child: Padding(
-                                        padding: const EdgeInsets.only(left: 20.0,top:10),
+                                        padding: const EdgeInsets.only(left: 10.0,top:10),
 
                                         //Items in List view item
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
+                                            Transform.scale(
+                                              scale: 1.5,
+                                              child: Checkbox(
+                                                value: unassignedTaskList[index]['selectedStatus'],
+                                                checkColor: Colors.white,
+                                                activeColor: Color.fromRGBO(127, 235, 249, 1),
+                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                                                onChanged: (newValue){
+                                                  setState(() {
+                                                    unassignedTaskList[index]['selectedStatus']=newValue!;
+                                                  });
+                                                }
+                                              ),
+                                            ),
                                             Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
@@ -299,8 +461,22 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
                           }
                           else{
                             return Center(
-                              child: CircularProgressIndicator(
-                                color: Color.fromRGBO(55, 147, 159, 1),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(height: screen.height*0.2),
+                                  Text(
+                                      'Task List Is Empty',
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.bebasNeue(
+                                        textStyle:TextStyle(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black38
+                                        ),
+                                      )
+                                  ),
+                                ],
                               ),
                             );
                             //   Container(
@@ -325,25 +501,84 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
                   ),
                   SizedBox(height: screen.height*0.01),
 
-                  //Generate and reschdule timetable button
+                  //Generate and reschedule timetable button
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      //Generate Timetable Button
                       SizedBox(width: screen.width*0.02),
                       MaterialButton(
                         padding: EdgeInsets.zero,
-                        onPressed: (){
+                        onPressed: () async{
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return displayDatePicker();
+                              }
+                          );
+                          // selectedTask.clear();
+                          // for(int i=0; i < unassignedTaskList.length; i++){
+                          //   if(unassignedTaskList[i]['selectedStatus']){
+                          //     selectedTask.add(unassignedTaskList[i]);
+                          //   }
+                          // }
+                          // selectedTask=sortFunction.sortFunction(selectedTask, 'PriorityDescending');
+                          // print(selectedTask);
+                          //
+                          //
+                          // SharedPreferences localStorage = await SharedPreferences.getInstance();
+                          // var userID = localStorage.getInt('userID');
+                          // var sunday = DateTime.now().subtract(Duration(days: DateTime.now().weekday));
+                          //
+                          // Map data = {
+                          //   'userID':userID,
+                          //   'taskList':selectedTask,
+                          //   'selectedStartDate':sunday,
+                          //   'selectedEndDate':sunday.add(Duration(days: 6))
+                          // };
+                          // print(data);
+                          // api.postData('generateTimetable', data).then((value) {
+                          //   print(value);
+                          //   showDialog(
+                          //       context: context,
+                          //       builder: (BuildContext context) {
+                          //         return AlertDialog(
+                          //           title: Text("Timetable Generated!"),
+                          //           content: Text("A new timetable had been generated!"),
+                          //           actions: [
+                          //             MaterialButton(
+                          //               child: Text('OK'),
+                          //               onPressed: (){
+                          //                 Navigator.pop(context);
+                          //                 loadTask();
+                          //               },
+                          //             ),
+                          //           ],
+                          //         );
+                          //       }
+                          //   );
+                          // });
 
                         },
-                        child: button.myShortIconButton('Generate \n Timetable', 23, Color.fromRGBO(55, 147, 159, 1), 'assets/img/forwardButton.png', context),
+                        child: button.myShortIconButton('Add to\n Timetable', 23, Color.fromRGBO(55, 147, 159, 1), 'assets/img/forwardButton.png', context),
                       ),
-                      SizedBox(width: screen.width*0.01),
-                      MaterialButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: (){
 
-                        },
-                        child: button.myShortIconButton('Reschedule \n Timetable', 23, Color.fromRGBO(214, 93, 93, 1), 'assets/img/forwardButton.png', context),
-                      ),
+                      //Reschedule Timetable Button
+                      // SizedBox(width: screen.width*0.01),
+                      // MaterialButton(
+                      //   padding: EdgeInsets.zero,
+                      //   onPressed: (){
+                      //
+                      //
+                      //     showDialog(
+                      //         context: context,
+                      //         builder: (BuildContext context) {
+                      //           return displayDatePicker('rescheduleTimetable');
+                      //         }
+                      //     );
+                      //   },
+                      //   child: button.myShortIconButton('Reschedule \n Timetable', 23, Color.fromRGBO(214, 93, 93, 1), 'assets/img/forwardButton.png', context),
+                      // ),
                     ],
                   )
                 ],

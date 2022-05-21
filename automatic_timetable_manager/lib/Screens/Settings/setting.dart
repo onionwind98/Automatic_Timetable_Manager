@@ -1,3 +1,6 @@
+import 'package:automatic_timetable_manager/Screens/Settings/changeEmail.dart';
+import 'package:automatic_timetable_manager/Screens/Settings/changePassword.dart';
+import 'package:automatic_timetable_manager/Shared/myButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,93 +16,97 @@ class Setting extends StatefulWidget{
 
 class _SettingState extends State<Setting> {
   Api api = Api();
-
+  MyButton button = MyButton();
   @override
   Widget build(BuildContext context) {
     Size screen= MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Stack(
-            children: [
-              Positioned(
-                child: Container(
-                  decoration: BoxDecoration(
-                    // border: Border.all(color: Colors.black,width: 2.0),
-                    borderRadius: BorderRadius.only(bottomLeft:Radius.circular(30),bottomRight:Radius.circular(30)),
-                    color: Color.fromRGBO(127, 235, 249, 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.4),
-                        spreadRadius: 1,
-                        blurRadius: 7,
-                        offset: Offset(0, 5), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  height: (screen.height*0.15),
-                ),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(screen.height*0.08),
+        child: AppBar(
+          backgroundColor:  Color.fromRGBO(127, 235, 249, 1),
+          leading:  Padding(
+            padding: EdgeInsets.only(top:15),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Container(
+                height: screen.height * 0.17,
+                child: Image.asset('assets/img/backButton.png'),
               ),
-              Positioned(
-                top:screen.height*0.01,
-                left:screen.height*0.02,
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: (){
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        height: screen.height*0.17,
-                        child: Image.asset('assets/img/backButton.png'),
-                      ),
-                    ),
-                    SizedBox(width: 30,),
-                    Text(
-                        'Settings',
-                        style: GoogleFonts.bebasNeue(
-                          textStyle:TextStyle(
-                              fontSize: 50,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white
-                          ),
-                        )
-                    ),
-                    SizedBox(width: 40,),
-                    Container(
-                      width: 50,
-                      child: MaterialButton(
-                        padding: EdgeInsets.all(0),
-                        onPressed: () async{
-                          await api.getData('logout').then((value) async {
-                            print(value);
-                            if(value['message']=='Logged out'){
-                              print('hilogout');
-                              SharedPreferences localStorage = await SharedPreferences.getInstance();
-                              localStorage.remove('user');
-                              localStorage.remove('token');
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Login()));
-                            }
-                          });
-
-                        },
-                        child: Icon(Icons.logout,size: 50,color: Colors.white,),
-
-                      ),
-                    ),
-
-                  ],
-                ),
-              ),
-
-            ],
+            ),
           ),
-        ],
+          centerTitle: true,
+          title: Padding(
+            padding: EdgeInsets.only(top: 15),
+            child: Text(
+                'Settings',
+                style: GoogleFonts.bebasNeue(
+                  textStyle: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                )
+            ),
+          ),
+        ),
+      ),
+
+      body: Container(
+        height: screen.height,
+        width: screen.width,
+        child: Column(
+          children: [
+            SizedBox(height: screen.height*0.1),
+            MaterialButton(
+              padding: EdgeInsets.zero,
+              onPressed: (){
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => ChangeEmail())
+                );
+              },
+              child: button.myLongSettingButton('Change \n Email Address',  Color.fromRGBO(55, 147, 159, 1), 'assets/img/emailIcon.png', context),
+            ),
+
+            SizedBox(height: screen.height*0.1),
+            MaterialButton(
+              padding: EdgeInsets.zero,
+              onPressed: (){
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => ChangePassword())
+                );
+              },
+              child: button.myLongSettingButton('Change \n Password',  Color.fromRGBO(71, 232, 194, 1), 'assets/img/emailIcon.png', context),
+            ),
+
+            SizedBox(height: screen.height*0.1),
+            MaterialButton(
+              padding: EdgeInsets.zero,
+              onPressed: () async{
+                await api.getData('logout').then((value) async {
+                  print(value);
+                  if(value['message']=='Logged out'){
+                    print('hilogout');
+                    SharedPreferences localStorage = await SharedPreferences.getInstance();
+                    localStorage.remove('user');
+                    localStorage.remove('token');
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Login()));
+                  }
+                });
+              },
+              child: button.myShortIconButton('Logout', 30, Colors.black, 'assets/img/signOutButton.png', context),
+            ),
+
+
+
+          ],
+        ),
       ),
     );
   }

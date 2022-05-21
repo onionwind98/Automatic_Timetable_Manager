@@ -19,7 +19,7 @@ class _LoginState extends State<Login> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   Api api = Api();
-  late bool error;
+  late bool error,viewPassword;
   late String errorText;
 
   @override
@@ -27,6 +27,7 @@ class _LoginState extends State<Login> {
     super.initState();
     errorText='';
     error=false;
+    viewPassword=true;
   }
 
   @override
@@ -141,25 +142,52 @@ class _LoginState extends State<Login> {
                                 ),
                               ],
                             ),
-                            child: TextField(
-                                controller: passwordController,
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  hintText: 'Password',
-                                  hintStyle: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold
+                            child: Row(
+                              children: [
+                                Container(
+                                  width:screen.width*0.6,
+                                  child: TextField(
+                                      controller: passwordController,
+                                      obscureText: viewPassword,
+                                      decoration: InputDecoration(
+                                        hintText: 'Password',
+                                        hintStyle: TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold
+                                        ),
+                                        fillColor: Colors.white,
+                                        filled: true,
+                                        border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(30),
+                                            borderSide: BorderSide.none
+                                        ),
+                                        contentPadding: EdgeInsets.all(20),
+                                      ),
+                                      cursorColor: Colors.black
                                   ),
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                      borderSide: BorderSide.none
-                                  ),
-                                  contentPadding: EdgeInsets.all(20),
                                 ),
-                                cursorColor: Colors.black
+                                Container(
+                                  width: screen.width*0.05,
+                                  child: MaterialButton(
+                                    padding: const EdgeInsets.all(0),
+                                    onPressed: (){
+                                      setState(() {
+                                        viewPassword=!viewPassword;
+                                      });
+                                      print(!viewPassword);
+
+                                    },
+                                    height: screen.height*0.03,
+                                    child: Container(
+                                      height: screen.height * 0.025,
+                                      width: screen.width*0.07,
+                                      child: viewPassword?Image.asset('assets/img/eyeOffIcon.png'):Image.asset('assets/img/eyeOnIcon.png'),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
+
                           ),
                           SizedBox(height: screen.height*0.02),
 
@@ -202,13 +230,21 @@ class _LoginState extends State<Login> {
                             padding: EdgeInsets.all(0),
                             onPressed: () async{
                               SharedPreferences localStorage = await SharedPreferences.getInstance();
+                              var emailFormat = r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
+                              bool emailValid = RegExp(emailFormat).hasMatch(emailController.text);
 
                               if(emailController.text.isEmpty||passwordController.text.isEmpty){
                                 setState(() {
                                   errorText='Please fill in all sections!';
                                   error=true;
                                 });
-                              }else{
+                              }else if(!emailValid){
+                                setState(() {
+                                  errorText='Please enter a valid email address format!';
+                                  error=true;
+                                });
+                              }
+                              else{
                                 error=false;
                                 var data = {
                                   'email': emailController.text,
@@ -234,9 +270,6 @@ class _LoginState extends State<Login> {
                                   }
                                 });
 
-                                // Navigator.push(
-                                //     context, MaterialPageRoute(builder: (context) => loginOTP(data: data))
-                                // );
                               }
 
                             },

@@ -21,13 +21,17 @@ class _ResetPasswordState extends State<ResetPassword> {
   late String errorText;
   MyAlertDialog alertDialog = MyAlertDialog();
   Api api =Api();
+  late bool viewPassword1,viewPassword2;
 
   @override
   void initState(){
     super.initState();
     errorText='';
     errorConfirmPassword=false;
-    errorPassword=false;  }
+    errorPassword=false;
+    viewPassword1 =true;
+    viewPassword2=true;
+  }
 
   @override
   void dispose() {
@@ -126,14 +130,14 @@ class _ResetPasswordState extends State<ResetPassword> {
                   //   ),
                   // ),
                   SizedBox(height: 20),
-                  Text(
-                      'New Password',
-                      style: GoogleFonts.oswald(
-                        textStyle:TextStyle(
-                            fontSize: 20
-                        ),
-                      )
-                  ),
+                  // Text(
+                  //     'New Password',
+                  //     style: GoogleFonts.oswald(
+                  //       textStyle:TextStyle(
+                  //           fontSize: 20
+                  //       ),
+                  //     )
+                  // ),
                   SizedBox(height: 10),
                   Container(
                     height: 60,
@@ -150,34 +154,61 @@ class _ResetPasswordState extends State<ResetPassword> {
                         ),
                       ],
                     ),
-                    child: TextField(
-                        controller: newPasswordController,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          hintText: 'New Password',
-                          hintStyle: TextStyle(
-                            fontSize: 17,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: screen.width*0.6,
+                          child: TextField(
+                              controller: newPasswordController,
+                              obscureText: viewPassword1,
+                              decoration: InputDecoration(
+                                hintText: 'New Password',
+                                hintStyle: TextStyle(
+                                  fontSize: 17,
+                                ),
+                                fillColor: Colors.white,
+                                filled: true,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                    borderSide: BorderSide.none
+                                ),
+                                contentPadding: EdgeInsets.all(20),
+                              ),
+                              cursorColor: Colors.black
                           ),
-                          fillColor: Colors.white,
-                          filled: true,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide.none
-                          ),
-                          contentPadding: EdgeInsets.all(20),
                         ),
-                        cursorColor: Colors.black
+                        Container(
+                          width: screen.width*0.05,
+                          child: MaterialButton(
+                            padding: const EdgeInsets.all(0),
+                            onPressed: (){
+                              setState(() {
+                                viewPassword1=!viewPassword1;
+                                print(!viewPassword1);
+
+                              });
+
+                            },
+                            height: screen.height*0.03,
+                            child: Container(
+                              height: screen.height * 0.025,
+                              width: screen.width*0.07,
+                              child: viewPassword1?Image.asset('assets/img/eyeOffIcon.png'):Image.asset('assets/img/eyeOnIcon.png'),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(height: 20),
-                  Text(
-                      'Confirm Password',
-                      style: GoogleFonts.oswald(
-                        textStyle:TextStyle(
-                          fontSize: 20,
-                        ),
-                      )
-                  ),
+                  // Text(
+                  //     'Confirm Password',
+                  //     style: GoogleFonts.oswald(
+                  //       textStyle:TextStyle(
+                  //         fontSize: 20,
+                  //       ),
+                  //     )
+                  // ),
                   SizedBox(height: 10),
                   Container(
                     height: 60,
@@ -194,23 +225,50 @@ class _ResetPasswordState extends State<ResetPassword> {
                         ),
                       ],
                     ),
-                    child: TextField(
-                        obscureText: true,
-                        controller: confirmPasswordController,
-                        decoration: InputDecoration(
-                          hintText: 'Confirm Password',
-                          hintStyle: TextStyle(
-                            fontSize: 17,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: screen.width*0.6,
+                          child: TextField(
+                              obscureText: viewPassword2,
+                              controller: confirmPasswordController,
+                              decoration: InputDecoration(
+                                hintText: 'Confirm Password',
+                                hintStyle: TextStyle(
+                                  fontSize: 17,
+                                ),
+                                fillColor: Colors.white,
+                                filled: true,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                    borderSide: BorderSide.none
+                                ),
+                                contentPadding: EdgeInsets.all(20),
+                              ),
+                              cursorColor: Colors.black
                           ),
-                          fillColor: Colors.white,
-                          filled: true,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide.none
-                          ),
-                          contentPadding: EdgeInsets.all(20),
                         ),
-                        cursorColor: Colors.black
+                        Container(
+                          width: screen.width*0.05,
+                          child: MaterialButton(
+                            padding: const EdgeInsets.all(0),
+                            onPressed: (){
+                              setState(() {
+                                viewPassword2=!viewPassword2;
+                                print(!viewPassword2);
+
+                              });
+
+                            },
+                            height: screen.height*0.03,
+                            child: Container(
+                              height: screen.height * 0.025,
+                              width: screen.width*0.07,
+                              child: viewPassword2?Image.asset('assets/img/eyeOffIcon.png'):Image.asset('assets/img/eyeOnIcon.png'),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Container(

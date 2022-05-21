@@ -1,4 +1,4 @@
-import 'package:automatic_timetable_manager/Screens/Tasks/assignedTasks.dart';
+import 'package:automatic_timetable_manager/Screens/Tasks/ongoingTasks.dart';
 import 'package:automatic_timetable_manager/Screens/Tasks/taskHistory.dart';
 import 'package:automatic_timetable_manager/Screens/Tasks/unassignedTasks.dart';
 import 'package:automatic_timetable_manager/Shared/myButton.dart';
@@ -18,7 +18,7 @@ class _TaskMenuState extends State<TaskMenu> {
 
   final tabs = [
     UnassignedTasks(),
-    AssignedTasks(),
+    OngoingTasks(),
     TaskHistory(),
   ];
 
@@ -39,7 +39,7 @@ class _TaskMenuState extends State<TaskMenu> {
             bottom: TabBar(
               tabs: const [
                 Tab(child: Text('Unassigned',style: TextStyle(fontSize: 17))),
-                Tab(child: Text('Assigned',style: TextStyle(fontSize: 17))),
+                Tab(child: Text('Ongoing',style: TextStyle(fontSize: 17))),
                 Tab(child: Text('History',style: TextStyle(fontSize: 17))),
               ],
             ),
@@ -72,11 +72,7 @@ class _TaskMenuState extends State<TaskMenu> {
         ),
         body: TabBarView(
           physics: NeverScrollableScrollPhysics(),
-          children: [
-            UnassignedTasks(),
-            AssignedTasks(),
-            TaskHistory(),
-          ],
+          children: tabs,
         ),
 
         //OLD TASK MENU

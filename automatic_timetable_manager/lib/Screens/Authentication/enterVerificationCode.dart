@@ -1,4 +1,3 @@
-import 'package:automatic_timetable_manager/Screens/Authentication/enterVerificationCode.dart';
 import 'package:automatic_timetable_manager/Screens/Authentication/resetPassword.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -7,13 +6,16 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../Database/api.dart';
 
-class EnterEmail extends StatefulWidget{
+class EnterVerificationCode extends StatefulWidget{
+  String email;
+  EnterVerificationCode({Key? key, required this.email}) : super(key: key);
+
   @override
-  _EnterEmailState createState() => _EnterEmailState();
+  _EnterVerificationCodeState createState() => _EnterVerificationCodeState();
 }
 
-class _EnterEmailState extends State<EnterEmail> {
-  TextEditingController emailController = TextEditingController();
+class _EnterVerificationCodeState extends State<EnterVerificationCode> {
+  TextEditingController verificationCodeController = TextEditingController();
   Api api = Api();
   late bool error;
   late String errorText;
@@ -56,11 +58,12 @@ class _EnterEmailState extends State<EnterEmail> {
             ),
           ),
           Positioned(
-            top:screen.height*0.15,
+            top:screen.height*0.1,
             child: Column(
               children: [
                 Text(
-                    'Enter Email Address',
+                    'Enter \n Verification Code',
+                    textAlign: TextAlign.center,
                     style: GoogleFonts.bebasNeue(
                       textStyle:TextStyle(
                         fontSize: 50,
@@ -69,7 +72,7 @@ class _EnterEmailState extends State<EnterEmail> {
                     )
                 ),
                 Text(
-                  'Enter email address to \n reset your password',
+                  'Enter verification code sent to your \n email address to \n reset your password',
                   style: TextStyle(
                     fontSize: 20,
                   ),
@@ -92,9 +95,9 @@ class _EnterEmailState extends State<EnterEmail> {
                     ],
                   ),
                   child: TextField(
-                      controller: emailController,
+                      controller: verificationCodeController,
                       decoration: InputDecoration(
-                        hintText: 'Email Address',
+                        hintText: 'Verification Code',
                         hintStyle: TextStyle(
                           fontSize: 17,
                         ),
@@ -127,40 +130,17 @@ class _EnterEmailState extends State<EnterEmail> {
                 MaterialButton(
                   padding: EdgeInsets.all(0),
                   onPressed: () {
-                    var emailFormat = r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
-                    bool emailValid = RegExp(emailFormat).hasMatch(emailController.text);
-
-                    if(emailController.text.isEmpty){
+                    if(verificationCodeController.text=='1234'){
+                      error=true;
+                      Navigator.push(
+                          context, MaterialPageRoute(builder: (context) => ResetPassword(email: widget.email))
+                      );
+                    }else{
                       setState(() {
-                        errorText='Please fill in the email address!';
-                        error=true;
-                      });
-                    }else if(!emailValid){
-                      setState(() {
-                        errorText='Please enter a valid email address format!';
+                        errorText='Incorrect Verification Code';
                         error=true;
                       });
                     }
-                    else{
-                      Map data = {
-                        'email': emailController.text
-                      };
-                      error=false;
-                      api.postData('checkEmail', data).then((value) {
-                        if(value['message']=='Invalid Email Address'){
-                          setState(() {
-                            errorText='Please enter a valid email address to reset the password.';
-                            error=true;
-                          });
-                        }else{
-                          Navigator.push(
-                              context, MaterialPageRoute(builder: (context) => EnterVerificationCode(email: emailController.text,))
-                          );
-                        }
-                      });
-
-                    }
-
                   },
                   child: Container(
                     alignment: Alignment.center,
@@ -180,11 +160,11 @@ class _EnterEmailState extends State<EnterEmail> {
                       ],
                     ),
                     child: Text(
-                      'Send \n Verification Email',
+                      'Confirm',
                       style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -192,8 +172,8 @@ class _EnterEmailState extends State<EnterEmail> {
                 ),
                 SizedBox(height: 20),
                 Container(
-                  height: screen.height*0.4,
-                  child: Image.asset('assets/img/enterEmailPic.png'),
+                  height: screen.height*0.3,
+                  child: Image.asset('assets/img/verificationCodePic.png'),
                 )
               ],
             ),

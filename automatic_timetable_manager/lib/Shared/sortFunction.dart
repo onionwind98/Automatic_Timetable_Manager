@@ -50,7 +50,47 @@ class SortFunction {
     return dropdownMenuItems;
   }
 
-
+  List<DropdownMenuItem<String>> get dropdownItemsOngoingHistory{
+    List<DropdownMenuItem<String>> dropdownMenuItems = [
+      DropdownMenuItem(
+          child: Row(
+            children:  [
+              Text("Title"),
+              Icon(Icons.arrow_downward_rounded,size: 30,color: Colors.white)
+            ],
+          ),
+          value: "TitleAscending"
+      ),
+      DropdownMenuItem(
+          child: Row(
+            children:  [
+              Text("Title"),
+              Icon(Icons.arrow_upward_rounded,size: 30,color: Colors.white)
+            ],
+          ),
+          value: "TitleDescending"
+      ),
+      DropdownMenuItem(
+          child: Row(
+            children:  [
+              Text("Date"),
+              Icon(Icons.arrow_downward_rounded,size: 30,color: Colors.white)
+            ],
+          ),
+          value: "DateAscending"
+      ),
+      DropdownMenuItem(
+          child: Row(
+            children:  [
+              Text("Date"),
+              Icon(Icons.arrow_upward_rounded,size: 30,color: Colors.white)
+            ],
+          ),
+          value: "DateDescending"
+      ),
+    ];
+    return dropdownMenuItems;
+  }
 
 
   sortFunction(List sortingList, String sortOption){
@@ -73,6 +113,16 @@ class SortFunction {
       case 'PriorityDescending':
         sortingList.sort(
           (b,a) => a['priorityLevel'].compareTo(b['priorityLevel'])
+        );
+        break;
+      case 'DateAscending':
+        sortingList.sort(
+                (a,b) => DateTime.parse(a['assignedDate']).compareTo(DateTime.parse(b['assignedDate']))
+        );
+        break;
+      case 'DateDescending':
+        sortingList.sort(
+                (b,a) => DateTime.parse(a['assignedDate']).compareTo(DateTime.parse(b['assignedDate']))
         );
         break;
     }

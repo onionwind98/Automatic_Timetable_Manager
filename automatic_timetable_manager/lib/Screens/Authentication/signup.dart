@@ -17,7 +17,7 @@ class _SignupState extends State<Signup> {
   TextEditingController passwordController = TextEditingController();
   Api api = Api();
   MyAlertDialog alertDialog = MyAlertDialog();
-  late bool error;
+  late bool error,viewPassword;
   late String errorText;
 
   @override
@@ -25,6 +25,7 @@ class _SignupState extends State<Signup> {
     super.initState();
     errorText='';
     error=false;
+    viewPassword=true;
   }
 
   @override
@@ -69,7 +70,7 @@ class _SignupState extends State<Signup> {
 
                     //Main Content
                     Positioned(
-                      top:screen.height*0.1,
+                      top:screen.height*0.05,
                       child: Column(
                           children:[
                             //Title
@@ -138,24 +139,50 @@ class _SignupState extends State<Signup> {
                                   ),
                                 ],
                               ),
-                              child: TextField(
-                                  controller: passwordController,
-                                  obscureText: true,
-                                  decoration: InputDecoration(
-                                    hintText: 'Password',
-                                    hintStyle: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.bold
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width:screen.width*0.6,
+                                    child: TextField(
+                                      controller: passwordController,
+                                      obscureText: viewPassword,
+                                      decoration: InputDecoration(
+                                        hintText: 'Password',
+                                        hintStyle: TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold
+                                        ),
+                                        fillColor: Colors.white,
+                                        filled: true,
+                                        border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(30),
+                                            borderSide: BorderSide.none
+                                        ),
+                                        contentPadding: EdgeInsets.all(20),
+                                      ),
+                                      cursorColor: Colors.black
                                     ),
-                                    fillColor: Colors.white,
-                                    filled: true,
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                        borderSide: BorderSide.none
-                                    ),
-                                    contentPadding: EdgeInsets.all(20),
                                   ),
-                                  cursorColor: Colors.black
+                                  Container(
+                                    width: screen.width*0.05,
+                                    child: MaterialButton(
+                                      padding: const EdgeInsets.all(0),
+                                      onPressed: (){
+                                        setState(() {
+                                          viewPassword=!viewPassword;
+                                        });
+                                        print(!viewPassword);
+
+                                      },
+                                      height: screen.height*0.03,
+                                      child: Container(
+                                        height: screen.height * 0.025,
+                                        width: screen.width*0.07,
+                                        child: viewPassword?Image.asset('assets/img/eyeOffIcon.png'):Image.asset('assets/img/eyeOnIcon.png'),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             SizedBox(height: screen.height*0.03),
@@ -181,12 +208,21 @@ class _SignupState extends State<Signup> {
                             MaterialButton(
                               padding: EdgeInsets.all(0),
                               onPressed: () async{
+                                var emailFormat = r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
+                                bool emailValid = RegExp(emailFormat).hasMatch(emailController.text);
+
                                 if(emailController.text.isEmpty||passwordController.text.isEmpty){
                                   setState(() {
                                     errorText='Please fill in all sections!';
                                     error=true;
                                   });
-                                }else{
+                                }else if(!emailValid){
+                                  setState(() {
+                                    errorText='Please enter a valid email address format!';
+                                    error=true;
+                                  });
+                                }
+                                else{
                                   error=false;
                                   var data = {
                                     'email': emailController.text,

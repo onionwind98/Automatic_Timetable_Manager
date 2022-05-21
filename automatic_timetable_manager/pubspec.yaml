@@ -40,6 +40,10 @@ dependencies:
   syncfusion_flutter_sliders: ^20.1.47
   syncfusion_flutter_core: ^20.1.47
   flutter_slidable: ^1.2.0
+  flutter_date_pickers: ^0.3.0
+  intl: ^0.17.0
+  flutter_colorpicker: ^1.0.3
+  linked_scroll_controller: ^0.2.0
 
 
 dev_dependencies:
