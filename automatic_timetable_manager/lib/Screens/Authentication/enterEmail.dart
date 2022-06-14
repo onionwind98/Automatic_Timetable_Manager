@@ -15,7 +15,7 @@ class EnterEmail extends StatefulWidget{
 class _EnterEmailState extends State<EnterEmail> {
   TextEditingController emailController = TextEditingController();
   Api api = Api();
-  late bool error;
+  late bool error,isLoading;
   late String errorText;
 
   @override
@@ -23,6 +23,8 @@ class _EnterEmailState extends State<EnterEmail> {
     super.initState();
     errorText='';
     error=false;
+    isLoading=false;
+
   }
 
   @override
@@ -129,16 +131,21 @@ class _EnterEmailState extends State<EnterEmail> {
                   onPressed: () {
                     var emailFormat = r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
                     bool emailValid = RegExp(emailFormat).hasMatch(emailController.text);
-
+                    setState(() {
+                      isLoading=true;
+                    });
                     if(emailController.text.isEmpty){
                       setState(() {
                         errorText='Please fill in the email address!';
                         error=true;
+                        isLoading=false;
+
                       });
                     }else if(!emailValid){
                       setState(() {
                         errorText='Please enter a valid email address format!';
                         error=true;
+                        isLoading=false;
                       });
                     }
                     else{
@@ -153,6 +160,9 @@ class _EnterEmailState extends State<EnterEmail> {
                             error=true;
                           });
                         }else{
+                          setState(() {
+                            isLoading=false;
+                          });
                           Navigator.push(
                               context, MaterialPageRoute(builder: (context) => EnterVerificationCode(email: emailController.text,))
                           );
@@ -179,7 +189,8 @@ class _EnterEmailState extends State<EnterEmail> {
                         ),
                       ],
                     ),
-                    child: Text(
+                    child: isLoading? Center(child:CircularProgressIndicator()):
+                    Text(
                       'Send \n Verification Email',
                       style: TextStyle(
                           fontSize: 25,

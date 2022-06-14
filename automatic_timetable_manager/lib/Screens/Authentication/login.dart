@@ -19,7 +19,7 @@ class _LoginState extends State<Login> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   Api api = Api();
-  late bool error,viewPassword;
+  late bool error,viewPassword,isLoading;
   late String errorText;
 
   @override
@@ -28,6 +28,8 @@ class _LoginState extends State<Login> {
     errorText='';
     error=false;
     viewPassword=true;
+    isLoading=false;
+    print(isLoading);
   }
 
   @override
@@ -232,16 +234,20 @@ class _LoginState extends State<Login> {
                               SharedPreferences localStorage = await SharedPreferences.getInstance();
                               var emailFormat = r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
                               bool emailValid = RegExp(emailFormat).hasMatch(emailController.text);
-
+                              setState(() {
+                                isLoading=true;
+                              });
                               if(emailController.text.isEmpty||passwordController.text.isEmpty){
                                 setState(() {
                                   errorText='Please fill in all sections!';
                                   error=true;
+                                  isLoading=false;
                                 });
                               }else if(!emailValid){
                                 setState(() {
                                   errorText='Please enter a valid email address format!';
                                   error=true;
+                                  isLoading=false;
                                 });
                               }
                               else{
@@ -260,6 +266,9 @@ class _LoginState extends State<Login> {
                                       error=true;
                                     });
                                   }else{
+                                    setState(() {
+                                      isLoading=false;
+                                    });
                                     localStorage.setInt('userID', value['user']['userID']);
                                     localStorage.setString('email', value['user']['email']);
                                     localStorage.setString('token', value['token']);
@@ -290,7 +299,8 @@ class _LoginState extends State<Login> {
                                   ),
                                 ],
                               ),
-                              child: Text(
+                              child: isLoading? Center(child:CircularProgressIndicator()):
+                              Text(
                                 'Login',
                                 style: TextStyle(
                                     fontSize: 30,
