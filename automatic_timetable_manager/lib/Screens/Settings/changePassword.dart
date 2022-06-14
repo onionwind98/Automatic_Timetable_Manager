@@ -24,7 +24,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   TextEditingController oldPasswordController = TextEditingController();
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
-  late bool errorConfirmPassword,errorFillChecker;
+  late bool errorConfirmPassword,errorFillChecker,isLoading;
   late String errorText;
   late bool viewPassword1,viewPassword2,viewPassword3;
 
@@ -34,6 +34,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   @override
   void initState(){
     super.initState();
+    isLoading=false;
     errorText='';
     errorConfirmPassword=false;
     errorFillChecker=false;
@@ -258,12 +259,16 @@ class _ChangePasswordState extends State<ChangePassword> {
                   //Save Button
                   MaterialButton(
                     onPressed: () async {
+                      setState(() {
+                        isLoading=true;
+                      });
                       SharedPreferences localStorage = await SharedPreferences.getInstance();
                       var userID = localStorage.getInt('userID');
                       if(oldPasswordController.text.isEmpty||newPasswordController.text.isEmpty||confirmPasswordController.text.isEmpty){
                         setState(() {
                           errorText='Please fill in all sections!';
                           errorFillChecker=true;
+                          isLoading=false;
                         });
                       }
                       //check if password meets condition
@@ -272,12 +277,14 @@ class _ChangePasswordState extends State<ChangePassword> {
                         setState(() {
                           errorText='Password must be at least 8 characters and not empty.';
                           errorConfirmPassword=true;
+                          isLoading=false;
                         });
                       }
                       else if(newPasswordController.text!=confirmPasswordController.text){
                         setState(() {
                           errorText='Password did not match';
                           errorConfirmPassword=true;
+                          isLoading=false;
                         });
                       }else{
                         setState(() {
@@ -292,6 +299,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                           print(data);
 
                           api.postData('changePassword', data).then((value) async{
+                            setState(() {
+                              isLoading=false;
+                            });
                             print(value);
 
                             if(value['message']=='Wrong Old Password!'){
@@ -339,13 +349,55 @@ class _ChangePasswordState extends State<ChangePassword> {
                         });
                       }
                     },
-                    child: button.myShortIconButton(
-                        'Save',
-                        30,
-                        Color.fromRGBO(55, 147, 159, 1),
-                        'assets/img/forwardButton.png',
-                        context
-                    ),
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: screen.height * 0.08,
+                      width: screen.width * 0.45,
+                      decoration: BoxDecoration(
+                        // border: Border.all(color: Colors.black,width: 3.0),
+                        color: Color.fromRGBO(55, 147, 159, 1),
+                        borderRadius: BorderRadius.circular(40.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.4),
+                            spreadRadius: 1,
+                            blurRadius: 7,
+                            offset: Offset(0, 5), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: isLoading? Center(child:CircularProgressIndicator()):
+                      Padding(
+                        padding: const EdgeInsets.only(left: 25.0,top: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                                'Save',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.bebasNeue(
+                                  textStyle:TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white
+                                  ),
+                                )
+                            ),
+                            Container(
+                              height: screen.height * 0.15,
+                              child: Image.asset('assets/img/forwardButton.png'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                    // button.myShortIconButton(
+                    //     'Save',
+                    //     30,
+                    //     Color.fromRGBO(55, 147, 159, 1),
+                    //     'assets/img/forwardButton.png',
+                    //     context
+                    // ),
                   ),
                   // Container(
                   //   decoration: boxDeco.myBoxDecoration(Color.fromRGBO(127, 235, 249, 1)),

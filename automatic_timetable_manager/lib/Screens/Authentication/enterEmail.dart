@@ -158,6 +158,7 @@ class _EnterEmailState extends State<EnterEmail> {
                           setState(() {
                             errorText='Please enter a valid email address to reset the password.';
                             error=true;
+                            isLoading=false;
                           });
                         }else{
                           setState(() {

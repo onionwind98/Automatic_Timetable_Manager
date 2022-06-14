@@ -17,7 +17,7 @@ class _SignupState extends State<Signup> {
   TextEditingController passwordController = TextEditingController();
   Api api = Api();
   MyAlertDialog alertDialog = MyAlertDialog();
-  late bool error,viewPassword;
+  late bool error,viewPassword,isLoading;
   late String errorText;
 
   @override
@@ -26,6 +26,7 @@ class _SignupState extends State<Signup> {
     errorText='';
     error=false;
     viewPassword=true;
+    isLoading=false;
   }
 
   @override
@@ -222,22 +223,27 @@ class _SignupState extends State<Signup> {
                               onPressed: () async{
                                 var emailFormat = r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
                                 bool emailValid = RegExp(emailFormat).hasMatch(emailController.text);
-
+                                setState(() {
+                                  isLoading=true;
+                                });
                                 if(emailController.text.isEmpty||passwordController.text.isEmpty){
                                   setState(() {
                                     errorText='Please fill in all sections!';
                                     error=true;
+                                    isLoading=false;
                                   });
                                 }else if(!emailValid){
                                   setState(() {
                                     errorText='Please enter a valid email address format!';
                                     error=true;
+                                    isLoading=false;
                                   });
                                 }
                                 else if(passwordController.text.length<8){
                                   setState(() {
                                     errorText='Please enter password with more than 8 characters!';
                                     error=true;
+                                    isLoading=false;
                                   });
                                 }
                                 else{
@@ -248,6 +254,9 @@ class _SignupState extends State<Signup> {
                                   };
 
                                   api.postData('register', data).then((value) {
+                                    setState(() {
+                                      isLoading=false;
+                                    });
                                     print(value);
                                     if(value['errors']['email'][0]=='The email has already been taken.'){
                                       alertDialog.showAlertDialog('Email Taken','Please enter a valid email address.',context);
@@ -279,7 +288,8 @@ class _SignupState extends State<Signup> {
                                     ),
                                   ],
                                 ),
-                                child: Text(
+                                child: isLoading? Center(child:CircularProgressIndicator()):
+                                Text(
                                   'Sign Up',
                                   style: TextStyle(
                                       fontSize: 30,

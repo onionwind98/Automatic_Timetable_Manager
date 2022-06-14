@@ -17,7 +17,7 @@ class _ResetPasswordState extends State<ResetPassword> {
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
-  late bool errorConfirmPassword,errorPassword;
+  late bool errorConfirmPassword,errorPassword,isLoading;
   late String errorText;
   MyAlertDialog alertDialog = MyAlertDialog();
   Api api =Api();
@@ -27,6 +27,7 @@ class _ResetPasswordState extends State<ResetPassword> {
   void initState(){
     super.initState();
     errorText='';
+    isLoading=false;
     errorConfirmPassword=false;
     errorPassword=false;
     viewPassword1 =true;
@@ -303,11 +304,15 @@ class _ResetPasswordState extends State<ResetPassword> {
                   MaterialButton(
                     padding: EdgeInsets.all(0),
                     onPressed: () {
+                      setState(() {
+                        isLoading=true;
+                      });
                       //check if field is filled
                       if(confirmPasswordController.text.isEmpty||newPasswordController.text.isEmpty){
                         setState(() {
                           errorText='Please fill in all sections!';
                           errorPassword=true;
+                          isLoading=false;
                         });
                       }
                       //check if password meets condition
@@ -316,6 +321,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                         setState(() {
                           errorText='Password must be at least 8 characters and not empty.';
                           errorPassword=true;
+                          isLoading=false;
                         });
                       }
                       //check if password matched
@@ -323,6 +329,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                         setState(() {
                           errorText='Password did not match';
                           errorConfirmPassword=true;
+                          isLoading=false;
                         });
                       }
                       else{
@@ -336,6 +343,9 @@ class _ResetPasswordState extends State<ResetPassword> {
                         };
                         print(data);
                         api.postData('forgetPassword', data).then((value) async{
+                          setState(() {
+                            isLoading=false;
+                          });
                           print(value);
                           // alertDialog.showAlertDialog('Password Reset Success!','Your password had been reset!',context);
 
@@ -367,7 +377,8 @@ class _ResetPasswordState extends State<ResetPassword> {
                           ),
                         ],
                       ),
-                      child: Text(
+                      child: isLoading? Center(child:CircularProgressIndicator()):
+                      Text(
                         'Confirm',
                         style: TextStyle(
                             fontSize: 30,

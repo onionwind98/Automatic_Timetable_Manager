@@ -2,7 +2,7 @@
     package="com.example.automatic_timetable_manager">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="automatic_timetable_manager"
+        android:label="Automatic Timetable Manager"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

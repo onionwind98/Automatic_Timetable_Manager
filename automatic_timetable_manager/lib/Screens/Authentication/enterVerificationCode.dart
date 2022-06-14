@@ -17,12 +17,13 @@ class EnterVerificationCode extends StatefulWidget{
 class _EnterVerificationCodeState extends State<EnterVerificationCode> {
   TextEditingController verificationCodeController = TextEditingController();
   Api api = Api();
-  late bool error;
+  late bool error,isLoading;
   late String errorText;
 
   @override
   void initState(){
     super.initState();
+    isLoading=false;
     errorText='';
     error=false;
   }
@@ -130,6 +131,9 @@ class _EnterVerificationCodeState extends State<EnterVerificationCode> {
                 MaterialButton(
                   padding: EdgeInsets.all(0),
                   onPressed: () {
+                    setState(() {
+                      isLoading=true;
+                    });
                     Map data = {
                       'email':widget.email,
                       'verificationCode':verificationCodeController.text
@@ -139,9 +143,11 @@ class _EnterVerificationCodeState extends State<EnterVerificationCode> {
                         setState(() {
                           errorText='Invalid Code!';
                           error=true;
+                          isLoading=false;
                         });
                       }else{
                         error=true;
+                        isLoading=false;
                         Navigator.push(
                             context, MaterialPageRoute(builder: (context) => ResetPassword(email: widget.email))
                         );
@@ -168,7 +174,8 @@ class _EnterVerificationCodeState extends State<EnterVerificationCode> {
                         ),
                       ],
                     ),
-                    child: Text(
+                    child: isLoading? Center(child:CircularProgressIndicator()):
+                    Text(
                       'Confirm',
                       style: TextStyle(
                         fontSize: 25,

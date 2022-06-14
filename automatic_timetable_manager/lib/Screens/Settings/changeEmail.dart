@@ -23,7 +23,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
   // TextEditingController oldEmailController = TextEditingController();
   TextEditingController newEmailController = TextEditingController();
   TextEditingController confirmEmailController = TextEditingController();
-  late bool errorConfirmEmail,errorFillChecker;
+  late bool errorConfirmEmail,errorFillChecker,isLoading;
   late String errorText;
 
 
@@ -31,6 +31,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
   @override
   void initState(){
     super.initState();
+    isLoading=false;
     errorText='';
     errorConfirmEmail=false;
     errorFillChecker=false;  }
@@ -122,6 +123,9 @@ class _ChangeEmailState extends State<ChangeEmail> {
                 SizedBox(height: screen.height*0.02),
                 MaterialButton(
                   onPressed: ()async{
+                    setState(() {
+                      isLoading=true;
+                    });
                     SharedPreferences localStorage = await SharedPreferences.getInstance();
                     var userID = localStorage.getInt('userID');
                     var emailFormat = r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
@@ -134,18 +138,21 @@ class _ChangeEmailState extends State<ChangeEmail> {
                       setState(() {
                         errorText='Please fill in all sections!';
                         errorFillChecker=true;
+                        isLoading=false;
                       });
                     }
                     else if(!newEmailValid||!confirmEmailValid){
                       setState(() {
                         errorText='Please enter a valid email address format!';
                         errorFillChecker=true;
+                        isLoading=false;
                       });
                     }
                     else if(newEmailController.text!=confirmEmailController.text){
                       setState(() {
                         errorText='Email did not match';
                         errorConfirmEmail=true;
+                        isLoading=false;
                       });
                     }else{
                       setState(()  {
@@ -159,6 +166,9 @@ class _ChangeEmailState extends State<ChangeEmail> {
                         print(data);
 
                         api.postData('changeEmail', data).then((value) async{
+                          setState(() {
+                            isLoading=false;
+                          });
                           print(value);
                           // alertDialog.showAlertDialog('Password Reset Success!','Your password had been reset!',context);
 
@@ -228,13 +238,55 @@ class _ChangeEmailState extends State<ChangeEmail> {
                       });
                     }
                   },
-                  child: button.myShortIconButton(
-                  'Save',
-                  30,
-                  Color.fromRGBO(55, 147, 159, 1),
-                  'assets/img/forwardButton.png',
-                  context
-                ),
+                  child:Container(
+                    alignment: Alignment.center,
+                    height: screen.height * 0.08,
+                    width: screen.width * 0.45,
+                    decoration: BoxDecoration(
+                      // border: Border.all(color: Colors.black,width: 3.0),
+                      color: Color.fromRGBO(55, 147, 159, 1),
+                      borderRadius: BorderRadius.circular(40.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.4),
+                          spreadRadius: 1,
+                          blurRadius: 7,
+                          offset: Offset(0, 5), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child: isLoading? Center(child:CircularProgressIndicator()):
+                    Padding(
+                      padding: const EdgeInsets.only(left: 25.0,top: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                              'Save',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.bebasNeue(
+                                textStyle:TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white
+                                ),
+                              )
+                          ),
+                          Container(
+                            height: screen.height * 0.15,
+                            child: Image.asset('assets/img/forwardButton.png'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                //   button.myShortIconButton(
+                //   'Save',
+                //   30,
+                //   Color.fromRGBO(55, 147, 159, 1),
+                //   'assets/img/forwardButton.png',
+                //   context
+                // ),
                 ),
                 // Container(
                 //   decoration: boxDeco.myBoxDecoration(Color.fromRGBO(127, 235, 249, 1)),
