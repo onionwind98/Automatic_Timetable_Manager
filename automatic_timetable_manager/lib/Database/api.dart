@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Api {
   Api();
-  final String _url = 'http://192.168.0.121:8000/api/';
+  final String _url = 'https://automatictimetablemanager.herokuapp.com/api/';
 
   Future getData(apiUrl)async{
     var fullUrl = _url + apiUrl;
