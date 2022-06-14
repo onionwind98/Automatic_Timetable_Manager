@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Database/api.dart';
 import '../Shared/myBoxDecoration.dart';
+import 'Tasks/viewTask.dart';
 
 class Home extends StatefulWidget{
   @override
@@ -21,6 +22,7 @@ class _HomeState extends State<Home> {
   Api api = Api();
   DateTime today = DateTime.now();
   late List taskList=[];
+
   void initState(){
     super.initState();
     loadTodayTask();
@@ -134,7 +136,7 @@ class _HomeState extends State<Home> {
                                     padding: EdgeInsets.all(0),
                                     onPressed: () {
                                       Navigator.push(
-                                          context, MaterialPageRoute(builder: (context) => TimetableMenu(tabSelector: 1,))
+                                          context, MaterialPageRoute(builder: (context) => TimetableMenu(tabSelector: 0,))
                                       ).then((value) => loadTodayTask() );
                                     },
                                     child: Row(
@@ -176,47 +178,45 @@ class _HomeState extends State<Home> {
                                             if(taskList.isNotEmpty){
                                               return Column(
                                                 children: [
-                                                  Container(
-                                                    alignment: Alignment.center,
-                                                    height: screen.height * 0.1,
-                                                    width: screen.width * 0.9,
-                                                    decoration: BoxDecoration(
-                                                      color: Color(int.parse(taskList[index]['taskColor'])),
-                                                      borderRadius: BorderRadius.circular(30.0),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: Colors.grey.withOpacity(0.4),
-                                                          spreadRadius: 1,
-                                                          blurRadius: 7,
-                                                          offset: Offset(0, 5), // changes position of shadow
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.only(left: 15.0,top:10),
+                                                  MaterialButton(
+                                                    padding: EdgeInsets.zero,
+                                                    onPressed:(){
+                                                      Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                      builder: (context) => ViewTask(viewItem: taskList[index],fromOngoing: true,))).then(
+                                                      (value) => {loadTodayTask()});
+                                                    },
+                                                    child: Container(
+                                                      alignment: Alignment.center,
+                                                      height: screen.height * 0.1,
+                                                      width: screen.width * 0.9,
+                                                      decoration: BoxDecoration(
+                                                        color: taskList[index]['status']==0?Color(int.parse(taskList[index]['taskColor'])):Color(int.parse(taskList[index]['taskColor'])).withOpacity(0.2),
+                                                        borderRadius: BorderRadius.circular(30.0),
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.grey.withOpacity(0.4),
+                                                            spreadRadius: 1,
+                                                            blurRadius: 7,
+                                                            offset: Offset(0, 5), // changes position of shadow
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(left: 15.0,top:10),
 
-                                                      //Items in List view item
-                                                      child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.start,
-                                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                                        children: [
+                                                        //Items in List view item
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                          children: [
 
-                                                          Column(
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: [
-                                                              Text(
-                                                                taskList[index]['title'],
-                                                                textAlign: TextAlign.center,
-                                                                style: TextStyle(
-                                                                    fontSize: 25,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    color: Colors.white
-                                                                ),
-                                                              ),
-                                                              Padding(
-                                                                padding: const EdgeInsets.all(0),
-                                                                child: Text(
-                                                                  taskList[index]['startTime'].toString()+' - '+taskList[index]['endTime'].toString(),
+                                                            Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Text(
+                                                                  taskList[index]['title'],
                                                                   textAlign: TextAlign.center,
                                                                   style: TextStyle(
                                                                       fontSize: 25,
@@ -224,25 +224,37 @@ class _HomeState extends State<Home> {
                                                                       color: Colors.white
                                                                   ),
                                                                 ),
-                                                              ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets.all(0),
+                                                                  child: Text(
+                                                                    taskList[index]['startTime'].toString()+' - '+taskList[index]['endTime'].toString(),
+                                                                    textAlign: TextAlign.center,
+                                                                    style: TextStyle(
+                                                                        fontSize: 25,
+                                                                        fontWeight: FontWeight.bold,
+                                                                        color: Colors.white
+                                                                    ),
+                                                                  ),
+                                                                ),
 
-                                                            ],
-                                                          ),
-                                                          // Transform.scale(
-                                                          //   scale: 1.5,
-                                                          //   child: Checkbox(
-                                                          //       value: taskList[index]['taskStatus'],
-                                                          //       checkColor: Colors.white,
-                                                          //       activeColor: Color.fromRGBO(127, 235, 249, 1),
-                                                          //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-                                                          //       onChanged: (newValue){
-                                                          //         setState(() {
-                                                          //           taskList[index]['taskStatus']=newValue!;
-                                                          //         });
-                                                          //       }
-                                                          //   ),
-                                                          // ),
-                                                        ],
+                                                              ],
+                                                            ),
+                                                            // Transform.scale(
+                                                            //   scale: 1.5,
+                                                            //   child: Checkbox(
+                                                            //       value: taskList[index]['taskStatus'],
+                                                            //       checkColor: Colors.white,
+                                                            //       activeColor: Color.fromRGBO(127, 235, 249, 1),
+                                                            //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                                                            //       onChanged: (newValue){
+                                                            //         setState(() {
+                                                            //           taskList[index]['taskStatus']=newValue!;
+                                                            //         });
+                                                            //       }
+                                                            //   ),
+                                                            // ),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
                                                   ),

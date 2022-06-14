@@ -236,12 +236,12 @@ class _ChangePasswordState extends State<ChangePassword> {
                       )
                   ),
 
-                  SizedBox(height: screen.height*0.02),
+                  SizedBox(height: screen.height*0.01),
                   //Error Message
                   if(errorFillChecker||errorConfirmPassword)
                     Container(
                         alignment: Alignment.center,
-                        height: screen.height*0.05,
+                        height: screen.height*0.07,
                         width: screen.width*0.7,
                         child: Text(
                           errorText,

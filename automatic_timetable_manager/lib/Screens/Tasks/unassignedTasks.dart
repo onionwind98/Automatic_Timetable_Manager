@@ -190,14 +190,7 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
 
           onPressed: () async {
             // print(selectedDate['startDate'].toString()+selectedDate['endDate'].toString());
-            selectedTask.clear();
-            for(int i=0; i < unassignedTaskList.length; i++){
-              if(unassignedTaskList[i]['selectedStatus']){
-                selectedTask.add(unassignedTaskList[i]);
-              }
-            }
-            selectedTask=sortFunction.sortFunction(selectedTask, 'PriorityDescending');
-            print('SELECTED TASK: '+selectedTask.toString());
+
 
 
             SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -268,7 +261,7 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
               children: [
                 //Sort Button
                 Container(
-                  padding: EdgeInsets.only(left: 20,top: 8),
+                  padding: EdgeInsets.only(left:20,top: 8),
                   height: screen.height * 0.08,
                   width: screen.width * 0.5,
                   decoration: BoxDecoration(
@@ -501,7 +494,7 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
                   ),
                   SizedBox(height: screen.height*0.01),
 
-                  //Generate and reschedule timetable button
+                  //Add to timetable button
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -510,55 +503,41 @@ class _UnassignedTasksState extends State<UnassignedTasks> {
                       MaterialButton(
                         padding: EdgeInsets.zero,
                         onPressed: () async{
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return displayDatePicker();
-                              }
-                          );
-                          // selectedTask.clear();
-                          // for(int i=0; i < unassignedTaskList.length; i++){
-                          //   if(unassignedTaskList[i]['selectedStatus']){
-                          //     selectedTask.add(unassignedTaskList[i]);
-                          //   }
-                          // }
-                          // selectedTask=sortFunction.sortFunction(selectedTask, 'PriorityDescending');
-                          // print(selectedTask);
-                          //
-                          //
-                          // SharedPreferences localStorage = await SharedPreferences.getInstance();
-                          // var userID = localStorage.getInt('userID');
-                          // var sunday = DateTime.now().subtract(Duration(days: DateTime.now().weekday));
-                          //
-                          // Map data = {
-                          //   'userID':userID,
-                          //   'taskList':selectedTask,
-                          //   'selectedStartDate':sunday,
-                          //   'selectedEndDate':sunday.add(Duration(days: 6))
-                          // };
-                          // print(data);
-                          // api.postData('generateTimetable', data).then((value) {
-                          //   print(value);
-                          //   showDialog(
-                          //       context: context,
-                          //       builder: (BuildContext context) {
-                          //         return AlertDialog(
-                          //           title: Text("Timetable Generated!"),
-                          //           content: Text("A new timetable had been generated!"),
-                          //           actions: [
-                          //             MaterialButton(
-                          //               child: Text('OK'),
-                          //               onPressed: (){
-                          //                 Navigator.pop(context);
-                          //                 loadTask();
-                          //               },
-                          //             ),
-                          //           ],
-                          //         );
-                          //       }
-                          //   );
-                          // });
+                          selectedTask.clear();
+                          for(int i=0; i < unassignedTaskList.length; i++){
+                            if(unassignedTaskList[i]['selectedStatus']){
+                              selectedTask.add(unassignedTaskList[i]);
+                            }
+                          }
+                          selectedTask=sortFunction.sortFunction(selectedTask, 'PriorityDescending');
+                          print('SELECTED TASK: '+selectedTask.toString());
 
+                          if(selectedTask.isEmpty){
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("No task selected"),
+                                    content: Text("Please select at least on task by clicking on its checkbox."),
+                                    actions: [
+                                      MaterialButton(
+                                        child: Text('OK'),
+                                        onPressed: (){
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                }
+                            );
+                          }else{
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return displayDatePicker();
+                                }
+                            );
+                          }
                         },
                         child: button.myShortIconButton('Add to\n Timetable', 23, Color.fromRGBO(55, 147, 159, 1), 'assets/img/forwardButton.png', context),
                       ),

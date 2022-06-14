@@ -84,7 +84,7 @@ class _SignupState extends State<Signup> {
                               ),
                               textAlign: TextAlign.center,
                             ),
-                            SizedBox(height: screen.height*0.04),
+                            SizedBox(height: screen.height*0.01),
 
                             //Email Address Text Box
                             Container(
@@ -185,8 +185,20 @@ class _SignupState extends State<Signup> {
                                 ],
                               ),
                             ),
-                            SizedBox(height: screen.height*0.03),
+                            SizedBox(height: screen.height*0.01),
 
+                            Container(
+                                height: 50,
+                                width: screen.width*0.7,
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.all(0),
+                                child: Text(
+                                  'Password must be at least 8 characters.',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                )
+                            ),
                             //Error Text
                             if(error)
                               Container(
@@ -219,6 +231,12 @@ class _SignupState extends State<Signup> {
                                 }else if(!emailValid){
                                   setState(() {
                                     errorText='Please enter a valid email address format!';
+                                    error=true;
+                                  });
+                                }
+                                else if(passwordController.text.length<8){
+                                  setState(() {
+                                    errorText='Please enter password with more than 8 characters!';
                                     error=true;
                                   });
                                 }

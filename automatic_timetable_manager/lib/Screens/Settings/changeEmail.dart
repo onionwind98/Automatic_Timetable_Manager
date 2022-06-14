@@ -144,7 +144,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
                     }
                     else if(newEmailController.text!=confirmEmailController.text){
                       setState(() {
-                        errorText='Password did not match';
+                        errorText='Email did not match';
                         errorConfirmEmail=true;
                       });
                     }else{

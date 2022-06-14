@@ -261,7 +261,7 @@ class _OngoingTasksState extends State<OngoingTasks> {
                     SizedBox(height: screen.height * 0.01),
                     //List of tasks
                     Container(
-                      height: screen.height * 0.57,
+                      height: screen.height * 0.65,
                       width: screen.width * 0.95,
                       padding: EdgeInsets.only(top: 10),
                       child: SingleChildScrollView(
@@ -308,31 +308,30 @@ class _OngoingTasksState extends State<OngoingTasks> {
 
                                       //Items in List view item
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          Transform.scale(
-                                            scale: 1.5,
-                                            child: Checkbox(
-                                                value: ongoingTaskList[index]
-                                                    ['selectedStatus'],
-                                                checkColor: Colors.white,
-                                                activeColor: Color.fromRGBO(
-                                                    127, 235, 249, 1),
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5.0)),
-                                                onChanged: (newValue) {
-                                                  setState(() {
-                                                    ongoingTaskList[index]
-                                                            ['selectedStatus'] =
-                                                        newValue!;
-                                                  });
-                                                }),
-                                          ),
+                                          // Transform.scale(
+                                          //   scale: 1.5,
+                                          //   child: Checkbox(
+                                          //       value: ongoingTaskList[index]
+                                          //           ['selectedStatus'],
+                                          //       checkColor: Colors.white,
+                                          //       activeColor: Color.fromRGBO(
+                                          //           127, 235, 249, 1),
+                                          //       shape: RoundedRectangleBorder(
+                                          //           borderRadius:
+                                          //               BorderRadius.circular(
+                                          //                   5.0)),
+                                          //       onChanged: (newValue) {
+                                          //         setState(() {
+                                          //           ongoingTaskList[index]
+                                          //                   ['selectedStatus'] =
+                                          //               newValue!;
+                                          //         });
+                                          //       }),
+                                          // ),
+                                          SizedBox(width: screen.width*0.05),
                                           Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -361,6 +360,12 @@ class _OngoingTasksState extends State<OngoingTasks> {
                                                 ),
                                               ),
                                             ],
+                                          ),
+                                          SizedBox(width: screen.width*0.15),
+                                          Container(
+                                            width: screen.width*0.05,
+                                            height: screen.height*0.05,
+                                            child: Image.asset('assets/img/blueForwardButton.png'),
                                           ),
                                         ],
                                       ),
@@ -408,60 +413,81 @@ class _OngoingTasksState extends State<OngoingTasks> {
                     SizedBox(height: screen.height * 0.01),
 
                     //Mark task as done button
-                    Center(
-                      child: MaterialButton(
-                        onPressed: () async {
-                          selectedTask.clear();
-                          for (int i = 0; i < ongoingTaskList.length; i++) {
-                            if (ongoingTaskList[i]['selectedStatus']) {
-                              selectedTask.add(ongoingTaskList[i]);
-                              selectedTask[i]['updateStatus']=2;
-                            }
-                          }
-
-                          Map data = {
-                            'taskList': selectedTask,
-                          };
-                          print(data);
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  actionsAlignment: MainAxisAlignment.center,
-                                  title: Text("Confirmation"),
-                                  content: Text("Mark selected task as done?"),
-                                  actions: [
-                                    MaterialButton(
-                                      child: Text('NO'),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                    MaterialButton(
-                                      child: Text('YES'),
-                                      onPressed: () {
-                                        api
-                                            .postData(
-                                                'updateListOfTaskStatus', data)
-                                            .then((value) {
-                                          print(value);
-                                        });
-                                        Navigator.pop(context);
-                                        loadTask();
-                                      },
-                                    ),
-                                  ],
-                                );
-                              });
-                        },
-                        child: button.myShortIconButton(
-                            'Mark As Done',
-                            25,
-                            Color.fromRGBO(55, 147, 159, 1),
-                            'assets/img/forwardButton.png',
-                            context),
-                      ),
-                    ),
+                    // Center(
+                    //   child: MaterialButton(
+                    //     onPressed: () async {
+                    //       selectedTask.clear();
+                    //       for (int i = 0; i < ongoingTaskList.length; i++) {
+                    //         if (ongoingTaskList[i]['selectedStatus']) {
+                    //           selectedTask.add(ongoingTaskList[i]);
+                    //           selectedTask[i]['updateStatus']=2;
+                    //         }
+                    //       }
+                    //
+                    //       if(selectedTask.isEmpty){
+                    //         showDialog(
+                    //             context: context,
+                    //             builder: (BuildContext context) {
+                    //               return AlertDialog(
+                    //                 title: Text("No task selected"),
+                    //                 content: Text("Please select at least on task by clicking on its checkbox."),
+                    //                 actions: [
+                    //                   MaterialButton(
+                    //                     child: Text('OK'),
+                    //                     onPressed: (){
+                    //                       Navigator.pop(context);
+                    //                     },
+                    //                   ),
+                    //                 ],
+                    //               );
+                    //             }
+                    //         );
+                    //       }else{
+                    //         Map data = {
+                    //           'taskList': selectedTask,
+                    //         };
+                    //         print(data);
+                    //         showDialog(
+                    //             context: context,
+                    //             builder: (BuildContext context) {
+                    //               return AlertDialog(
+                    //                 actionsAlignment: MainAxisAlignment.center,
+                    //                 title: Text("Confirmation"),
+                    //                 content: Text("Mark selected task as done?"),
+                    //                 actions: [
+                    //                   MaterialButton(
+                    //                     child: Text('NO'),
+                    //                     onPressed: () {
+                    //                       Navigator.pop(context);
+                    //                     },
+                    //                   ),
+                    //                   MaterialButton(
+                    //                     child: Text('YES'),
+                    //                     onPressed: () {
+                    //                       api.postData(
+                    //                           'updateListOfTaskStatus', data)
+                    //                           .then((value) {
+                    //                         print(value);
+                    //                       });
+                    //                       Navigator.pop(context);
+                    //                       loadTask();
+                    //                     },
+                    //                   ),
+                    //                 ],
+                    //               );
+                    //             });
+                    //       }
+                    //
+                    //
+                    //     },
+                    //     child: button.myShortIconButton(
+                    //         'Mark As Done',
+                    //         25,
+                    //         Color.fromRGBO(55, 147, 159, 1),
+                    //         'assets/img/forwardButton.png',
+                    //         context),
+                    //   ),
+                    // ),
                   ],
                 ),
               )

@@ -146,7 +146,7 @@ class _EnterEmailState extends State<EnterEmail> {
                         'email': emailController.text
                       };
                       error=false;
-                      api.postData('checkEmail', data).then((value) {
+                      api.postData('checkSendEmail', data).then((value) {
                         if(value['message']=='Invalid Email Address'){
                           setState(() {
                             errorText='Please enter a valid email address to reset the password.';

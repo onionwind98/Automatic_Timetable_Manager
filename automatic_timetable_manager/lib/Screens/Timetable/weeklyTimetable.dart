@@ -366,7 +366,7 @@ class _WeeklyTimetableState extends State<WeeklyTimetable> {
                                               margin: EdgeInsets.all(4.0),
                                               decoration:  boxDeco.timetableDeco(timetable[index1][index2]['status']==0 ?
                                                 Color(int.parse(timetable[index1][index2]['taskColor'])):
-                                                Color(int.parse(timetable[index1][index2]['taskColor'])).withOpacity(0.2)),
+                                                Color(int.parse(timetable[index1][index2]['taskColor'])).withOpacity(0.3)),
                                               child:
                                               timetable[index1][index2]?.isEmpty ? Text('') :
                                               Text(

@@ -282,8 +282,8 @@ class _DailyTimetableState extends State<DailyTimetable> {
                                                                   builder: (context) => ViewTask(
                                                                     viewItem:timetable[index],
                                                                     fromOngoing: timetable[index]['status']== 2 ? false : true,
-                                                                  ))).then((value) => {
-                                                            loadTimetable(currentDate)
+                                                                  ))).then((value)  {
+                                                              loadTimetable(currentDate);
                                                           }
                                                           );
                                                           // Navigator.pop(context);
@@ -302,7 +302,7 @@ class _DailyTimetableState extends State<DailyTimetable> {
                                               width: screen.width*0.7,
                                               height: screen.height*0.07,
                                               margin: EdgeInsets.all(4.0),
-                                              decoration:  boxDeco.timetableDeco(timetable[index]['status']==0 ? Color(int.parse(timetable[index]['taskColor'])): Color(int.parse(timetable[index]['taskColor'])).withOpacity(0.2))  ,
+                                              decoration:  boxDeco.timetableDeco(timetable[index]['status']==0 ? Color(int.parse(timetable[index]['taskColor'])): Color(int.parse(timetable[index]['taskColor'])).withOpacity(0.3))  ,
                                               child:
                                               timetable[index]?.isEmpty ? Text('') :
                                               Text(

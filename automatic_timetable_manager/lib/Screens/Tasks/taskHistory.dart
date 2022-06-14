@@ -1,3 +1,4 @@
+import 'package:automatic_timetable_manager/Screens/Tasks/viewTask.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_date_pickers/flutter_date_pickers.dart';
@@ -276,11 +277,11 @@ class _TaskHistoryState extends State<TaskHistory> {
                                     MaterialButton(
                                       padding: EdgeInsets.zero,
                                       onPressed: (){
-                                        // Navigator.push(
-                                        //     context, MaterialPageRoute(builder: (context) => EditTask(editItem: unassignedTaskList[index],))
-                                        // ).then((value) => {
-                                        //   loadTask()
-                                        // });
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => ViewTask(viewItem: ongoingTaskList[index],fromOngoing: true,))).then(
+                                                (value) => {loadTask()});
                                       },
                                       child: Container(
                                         alignment: Alignment.center,

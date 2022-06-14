@@ -130,17 +130,26 @@ class _EnterVerificationCodeState extends State<EnterVerificationCode> {
                 MaterialButton(
                   padding: EdgeInsets.all(0),
                   onPressed: () {
-                    if(verificationCodeController.text=='1234'){
-                      error=true;
-                      Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => ResetPassword(email: widget.email))
-                      );
-                    }else{
-                      setState(() {
-                        errorText='Incorrect Verification Code';
+                    Map data = {
+                      'email':widget.email,
+                      'verificationCode':verificationCodeController.text
+                    };
+                    api.postData('checkValidationCode', data).then((value) {
+                      if(value['message']=='Invalid Code'){
+                        setState(() {
+                          errorText='Invalid Code!';
+                          error=true;
+                        });
+                      }else{
                         error=true;
-                      });
-                    }
+                        Navigator.push(
+                            context, MaterialPageRoute(builder: (context) => ResetPassword(email: widget.email))
+                        );
+                      }
+                    });
+
+
+
                   },
                   child: Container(
                     alignment: Alignment.center,

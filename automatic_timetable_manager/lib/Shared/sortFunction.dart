@@ -13,7 +13,7 @@ class SortFunction {
       DropdownMenuItem(
           child: Row(
             children:  [
-              Text("Title"),
+              Text("Sort By: Title"),
               Icon(Icons.arrow_downward_rounded,size: 30,color: Colors.white)
             ],
           ),
@@ -22,7 +22,7 @@ class SortFunction {
       DropdownMenuItem(
           child: Row(
             children:  [
-              Text("Title"),
+              Text("Sort By: Title"),
               Icon(Icons.arrow_upward_rounded,size: 30,color: Colors.white)
             ],
           ),
@@ -31,7 +31,7 @@ class SortFunction {
       DropdownMenuItem(
           child: Row(
             children:  [
-              Text("Priority Level"),
+              Text("Sort By: \n Priority Level",style: TextStyle(fontSize: 22),textAlign: TextAlign.center),
               Icon(Icons.arrow_downward_rounded,size: 30,color: Colors.white)
             ],
           ),
@@ -40,7 +40,7 @@ class SortFunction {
       DropdownMenuItem(
           child: Row(
             children:  [
-              Text("Priority Level"),
+              Text("Sort By: \n Priority Level",style: TextStyle(fontSize: 22),textAlign: TextAlign.center),
               Icon(Icons.arrow_upward_rounded,size: 30,color: Colors.white)
             ],
           ),
@@ -55,7 +55,7 @@ class SortFunction {
       DropdownMenuItem(
           child: Row(
             children:  [
-              Text("Title"),
+              Text("Sort By: Title"),
               Icon(Icons.arrow_downward_rounded,size: 30,color: Colors.white)
             ],
           ),
@@ -64,7 +64,7 @@ class SortFunction {
       DropdownMenuItem(
           child: Row(
             children:  [
-              Text("Title"),
+              Text("Sort By: Title"),
               Icon(Icons.arrow_upward_rounded,size: 30,color: Colors.white)
             ],
           ),
@@ -73,7 +73,7 @@ class SortFunction {
       DropdownMenuItem(
           child: Row(
             children:  [
-              Text("Date"),
+              Text("Sort By: Date"),
               Icon(Icons.arrow_downward_rounded,size: 30,color: Colors.white)
             ],
           ),
@@ -82,7 +82,7 @@ class SortFunction {
       DropdownMenuItem(
           child: Row(
             children:  [
-              Text("Date"),
+              Text("Sort By: Date"),
               Icon(Icons.arrow_upward_rounded,size: 30,color: Colors.white)
             ],
           ),

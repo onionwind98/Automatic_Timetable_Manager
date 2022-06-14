@@ -74,6 +74,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                     padding: EdgeInsets.all(0),
                     onPressed:(){
                       Navigator.pop(context);
+                      Navigator.pop(context);
                     },
                     child: Icon(Icons.arrow_back_ios_outlined,size: 40,)
                 ),

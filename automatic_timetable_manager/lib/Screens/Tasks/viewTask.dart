@@ -105,7 +105,6 @@ class _ViewTaskState extends State<ViewTask> {
                                   Navigator.pop(context);
                                   Navigator.pop(context);
                                   Navigator.pop(context);
-                                  Navigator.pop(context);
                                 },
                               ),
                             ],
@@ -458,8 +457,8 @@ class _ViewTaskState extends State<ViewTask> {
                         deleteTask(widget.viewItem['taskID'], context);
                       },
                       child: button.myShortIconButton(
-                          'Delete Task',
-                          27,
+                          'Delete \n from Timetable',
+                          20,
                           Color.fromRGBO(214, 93, 93, 1),
                           'assets/img/forwardButton.png',
                           context),
@@ -544,20 +543,16 @@ class _ViewTaskState extends State<ViewTask> {
                     MaterialButton(
                       padding: EdgeInsets.zero,
                       onPressed: () async {
-                        List task = [widget.viewItem];
-                        task[0]['updateStatus']=widget.fromOngoing ? 2 : 0;
+                        // List task = [widget.viewItem];
 
-                        Map data = {
-                          'taskList': task,
-                        };
-                        print(data);
+
                         showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 actionsAlignment: MainAxisAlignment.center,
-                                title: Text(widget.fromOngoing?"Mark the task as DONE.":"Mark the task as ONGOING."),
-                                content: Text(widget.fromOngoing?"Mark task as done?":"Mark task as ongoing?"),
+                                title: Text(widget.viewItem['status'] == 0?"Mark the task as DONE.":"Mark the task as ONGOING."),
+                                content: Text(widget.viewItem['status'] == 0?"Mark task as done?":"Mark task as ongoing?"),
                                 actions: [
                                   MaterialButton(
                                     child: Text('NO'),
@@ -568,12 +563,19 @@ class _ViewTaskState extends State<ViewTask> {
                                   MaterialButton(
                                     child: Text('YES'),
                                     onPressed: () {
+                                      setState(() {
+                                        widget.viewItem['status']= widget.viewItem['status'] == 2 ? 0 : 2;
+                                      });
+
+                                      Map data = widget.viewItem;
+
+                                      print('DATA: '+data.toString());
+
                                       api.postData(
-                                          'updateListOfTaskStatus', data)
+                                          'updateTaskStatus', data)
                                           .then((value) {
                                         print(value);
                                       });
-                                      Navigator.pop(context);
                                       Navigator.pop(context);
                                     },
                                   ),
@@ -582,7 +584,7 @@ class _ViewTaskState extends State<ViewTask> {
                             });
                       },
                       child: button.myShortIconButton(
-                          widget.fromOngoing?'Mark As Done':'Mark As \nOngoing',
+                          widget.viewItem['status'] == 0?'Mark As Done':'Mark As \nOngoing',
                           25,
                           Colors.cyan,
                           'assets/img/forwardButton.png',
