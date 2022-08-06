@@ -7,3 +7,8 @@ The Automatic Timetable Management Mobile Application aims to help users to simp
  
 Backend Github Repo:
 https://github.com/onionwind98/Automatic_Timetable_Manager_Backend
+
+
+Application Overview:
+![image](https://user-images.githubusercontent.com/46781449/183228080-bc1a2c78-0f7e-4f81-9bd6-7a3aaf8c9eb8.png)
+![image](https://user-images.githubusercontent.com/46781449/183228096-1c67b8f7-1f77-427b-a79b-c98338e723c6.png)
