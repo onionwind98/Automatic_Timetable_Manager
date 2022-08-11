@@ -7,6 +7,8 @@ The Automatic Timetable Management Mobile Application aims to help users to simp
 The scheduling mechanism is handled by the Laravel Backend API below:
 https://github.com/onionwind98/Automatic_Timetable_Manager_Backend
 
+Try out the application by downloading the APK and User Manual here!
+https://github.com/onionwind98/Automatic_Timetable_Manager/releases/tag/V1.0
 
 # Application Overview
 Login & Sign Up Page:
